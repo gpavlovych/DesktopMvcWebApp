@@ -1,0 +1,34 @@
+﻿<Window x:Class="MyApplication.Desktop.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:mvvm="clr-namespace:Microsoft.Practices.Prism.Mvvm;assembly=Microsoft.Practices.Prism.Mvvm.Desktop"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525"
+        mvvm:ViewModelLocator.AutoWireViewModel="True">
+	<i:Interaction.Triggers>
+		<i:EventTrigger EventName="Loaded">
+			<i:InvokeCommandAction Command="{Binding LoadCommand}" />
+		</i:EventTrigger>
+	</i:Interaction.Triggers>
+	<Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel  Grid.Column="0"  Orientation="Horizontal" Height="Auto" HorizontalAlignment="Right"  VerticalAlignment="Top">
+            <Button Command="{Binding SearchCommand}" Content="Search" Width="100" Margin="5"></Button>
+        </StackPanel>
+        <StackPanel  Grid.Column="1"  Orientation="Horizontal" Height="Auto" HorizontalAlignment="Right"  VerticalAlignment="Top">
+            <Button Command="{Binding LoginCommand}" Content="Log In" Width="100" Margin="5"/>
+            <Button Command="{Binding LogOffCommand}" Content="Log Off" Width="100" Margin="5"/>
+        </StackPanel>
+        <TextBlock Text="{Binding SomeFoundContent}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+    </Grid>
+</Window>
