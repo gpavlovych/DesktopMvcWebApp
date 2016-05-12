@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AccountController.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The account controller.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,40 +7,31 @@ using MyApplication.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MyApplication.Web.Services;
 
 namespace MyApplication.Web.Controllers
 {
-    /// <summary>TODO The account controller.</summary>
     [Authorize]
     public class AccountController : Controller
     {
-        /// <summary>TODO The _user manager.</summary>
         private readonly IApplicationUserManager _userManager;
-
-        /// <summary>TODO The _sign in manager.</summary>
         private readonly IApplicationSignInManager _signInManager;
-
-        /// <summary>TODO The _authentication manager.</summary>
         private readonly IAuthenticationManager _authenticationManager;
+        private readonly IUserService _userService;
 
-        /// <summary>Initializes a new instance of the <see cref="AccountController"/> class.</summary>
-        /// <param name="userManager">TODO The user manager.</param>
-        /// <param name="signInManager">TODO The sign in manager.</param>
-        /// <param name="authenticationManager">TODO The authentication manager.</param>
         public AccountController(
             IApplicationUserManager userManager, 
             IApplicationSignInManager signInManager, 
-            IAuthenticationManager authenticationManager)
+            IAuthenticationManager authenticationManager,
+            IUserService userService)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._authenticationManager = authenticationManager;
+            this._userService = userService;
         }
 
         // GET: /Account/Login
-        /// <summary>TODO The login.</summary>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -59,10 +40,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/Login
-        /// <summary>TODO The login.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -104,11 +81,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/VerifyCode
-        /// <summary>TODO The verify code.</summary>
-        /// <param name="provider">TODO The provider.</param>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <param name="rememberMe">TODO The remember me.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
@@ -128,9 +100,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/VerifyCode
-        /// <summary>TODO The verify code.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -166,8 +135,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/Register
-        /// <summary>TODO The register.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult Register()
         {
@@ -175,9 +142,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/Register
-        /// <summary>TODO The register.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -200,7 +164,7 @@ namespace MyApplication.Web.Controllers
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                    return this.RedirectToAction("Index", "Publications");
+                    return this.RedirectToAction("Index", "Some");
                 }
 
                 this.AddErrors(result);
@@ -211,10 +175,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/ConfirmEmail
-        /// <summary>TODO The confirm email.</summary>
-        /// <param name="userId">TODO The user id.</param>
-        /// <param name="code">TODO The code.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
@@ -228,8 +188,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/ForgotPassword
-        /// <summary>TODO The forgot password.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -237,9 +195,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/ForgotPassword
-        /// <summary>TODO The forgot password.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -267,8 +222,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/ForgotPasswordConfirmation
-        /// <summary>TODO The forgot password confirmation.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
@@ -276,9 +229,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/ResetPassword
-        /// <summary>TODO The reset password.</summary>
-        /// <param name="code">TODO The code.</param>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
@@ -286,9 +236,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/ResetPassword
-        /// <summary>TODO The reset password.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -317,8 +264,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/ResetPasswordConfirmation
-        /// <summary>TODO The reset password confirmation.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
@@ -326,10 +271,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/ExternalLogin
-        /// <summary>TODO The external login.</summary>
-        /// <param name="provider">TODO The provider.</param>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -348,10 +289,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/SendCode
-        /// <summary>TODO The send code.</summary>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <param name="rememberMe">TODO The remember me.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
@@ -378,9 +315,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/SendCode
-        /// <summary>TODO The send code.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -408,13 +342,10 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Account/ExternalLoginCallback
-        /// <summary>TODO The external login callback.</summary>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
-            var loginInfo = await this._authenticationManager.GetExternalLoginInfoAsync();
+            var loginInfo = await this._userService.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
                 return this.RedirectToAction("Login");
@@ -452,10 +383,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/ExternalLoginConfirmation
-        /// <summary>TODO The external login confirmation.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -471,7 +398,7 @@ namespace MyApplication.Web.Controllers
             if (this.ModelState.IsValid)
             {
                 // Get the information about the user from the external login provider
-                var info = await this._authenticationManager.GetExternalLoginInfoAsync();
+                var info = await this._userService.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
                     return this.View("ExternalLoginFailure");
@@ -501,27 +428,21 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Account/LogOff
-        /// <summary>TODO The log off.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             this._authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return this.RedirectToAction("Index", "Publications");
+            return this.RedirectToAction("Index", "Some");
         }
 
         // GET: /Account/ExternalLoginFailure
-        /// <summary>TODO The external login failure.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
             return this.View();
         }
 
-        /// <summary>TODO The dispose.</summary>
-        /// <param name="disposing">TODO The disposing.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -542,12 +463,8 @@ namespace MyApplication.Web.Controllers
 
         #region Helpers
 
-        // Used for XSRF protection when adding external logins
-        /// <summary>TODO The xsr f_ key.</summary>
         private const string XSRF_KEY = "XsrfId";
 
-        /// <summary>TODO The add errors.</summary>
-        /// <param name="result">TODO The result.</param>
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -556,9 +473,6 @@ namespace MyApplication.Web.Controllers
             }
         }
 
-        /// <summary>TODO The redirect to local.</summary>
-        /// <param name="returnUrl">TODO The return url.</param>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (this.Url.IsLocalUrl(returnUrl))
@@ -566,23 +480,15 @@ namespace MyApplication.Web.Controllers
                 return this.Redirect(returnUrl);
             }
 
-            return this.RedirectToAction("Index", "Publications");
+            return this.RedirectToAction("Index", "Some");
         }
 
-        /// <summary>TODO The challenge result.</summary>
         internal class ChallengeResult : HttpUnauthorizedResult
         {
-            /// <summary>Initializes a new instance of the <see cref="ChallengeResult"/> class.</summary>
-            /// <param name="provider">TODO The provider.</param>
-            /// <param name="redirectUri">TODO The redirect uri.</param>
             public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null)
             {
             }
 
-            /// <summary>Initializes a new instance of the <see cref="ChallengeResult"/> class.</summary>
-            /// <param name="provider">TODO The provider.</param>
-            /// <param name="redirectUri">TODO The redirect uri.</param>
-            /// <param name="userId">TODO The user id.</param>
             public ChallengeResult(string provider, string redirectUri, string userId)
             {
                 this.LoginProvider = provider;
@@ -590,17 +496,13 @@ namespace MyApplication.Web.Controllers
                 this.UserId = userId;
             }
 
-            /// <summary>Gets or sets the login provider.</summary>
             public string LoginProvider { get; set; }
 
-            /// <summary>Gets or sets the redirect uri.</summary>
             public string RedirectUri { get; set; }
 
-            /// <summary>Gets or sets the user id.</summary>
             public string UserId { get; set; }
 
-            /// <summary>TODO The execute result.</summary>
-            /// <param name="context">TODO The context.</param>
+            [ExcludeFromCodeCoverage]
             public override void ExecuteResult(ControllerContext context)
             {
                 var properties = new AuthenticationProperties

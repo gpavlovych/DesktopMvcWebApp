@@ -39,7 +39,7 @@ namespace MyApplication.Desktop.Services
         /// </returns>
         public async Task<string> CallSomeApi()
         {
-            return await this._client.GetStringAsync("api/Some");
+            return await this._client.GetStringAsync("api/SomeApi");
         }
 
         #endregion

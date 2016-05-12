@@ -1,15 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SettingsProviderTests.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The settings provider tests.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using MyApplication.Web.Properties;
 using MyApplication.Web.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,11 +6,9 @@ using Ploeh.AutoFixture;
 
 namespace MyApplication.Web.DAL.Tests
 {
-    /// <summary>TODO The settings provider tests.</summary>
     [TestClass]
     public class SettingsProviderTests
     {
-        /// <summary>TODO The page size test.</summary>
         [TestMethod]
         public void PageSizeTest()
         {

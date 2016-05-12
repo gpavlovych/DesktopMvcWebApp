@@ -1,14 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AccountControllerTests.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The account controller tests.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using FluentAssertions;
@@ -16,36 +8,35 @@ using MyApplication.Web.Models;
 using MyApplication.Web.Tests.Controllers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using MyApplication.Web.Services;
 using Ploeh.AutoFixture;
 
 namespace MyApplication.Web.Controllers.Tests
 {
-    /// <summary>TODO The account controller tests.</summary>
     [TestClass]
     public class AccountControllerTests
     {
         #region Login
 
-        /// <summary>TODO The login get test.</summary>
         [TestMethod]
         public void LoginGetTest()
         {
            // arrange
             var fixture = new ControllerAutoFixture();
             var target = fixture.Create<AccountController>();
-            var returnUrl = "someReturnUrl";
+            var returnUrl = fixture.Create<string>("someReturnUrl");
 
             // act
             var result = target.Login(returnUrl) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewData["ReturnUrl"].Should().Be(returnUrl);
         }
 
-        /// <summary>TODO The login post test success url local.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task LoginPostTestSuccessUrlLocal()
         {
@@ -58,18 +49,17 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            var returnUrl = "/myurl";
+            var returnUrl = fixture.Create<string>("/myurl");
 
             // act
             var result = await target.Login(model, returnUrl) as RedirectResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Url.Should().Be(returnUrl);
             signInManagerMock.Verify(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false));
         }
 
-        /// <summary>TODO The login post test success url non local.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task LoginPostTestSuccessUrlNonLocal()
         {
@@ -82,19 +72,18 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            var returnUrl = "http://myurl";
+            var returnUrl = fixture.Create<string>("http://myurl");
 
             // act
             var result = await target.Login(model, returnUrl) as RedirectToRouteResult;
 
             // assert
-            result.RouteValues["controller"].Should().Be("Publications");
+            result.Should().NotBeNull();
+            result.RouteValues["controller"].Should().Be("Some");
             result.RouteValues["action"].Should().Be("Index");
             signInManagerMock.Verify(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false));
         }
 
-        /// <summary>TODO The login post test locked out.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task LoginPostTestLockedOut()
         {
@@ -107,18 +96,17 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            var returnUrl = "http://myurl";
+            var returnUrl = fixture.Create<string>("http://myurl");
 
             // act
             var result = await target.Login(model, returnUrl) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Lockout");
             signInManagerMock.Verify(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false));
         }
 
-        /// <summary>TODO The login post test requires verification.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task LoginPostTestRequiresVerification()
         {
@@ -131,20 +119,19 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            var returnUrl = "http://myurl";
+            var returnUrl = fixture.Create<string>("http://myurl");
 
             // act
             var result = await target.Login(model, returnUrl) as RedirectToRouteResult;
 
             // assert
+            result.Should().NotBeNull();
             result.RouteValues["action"].Should().Be("SendCode");
             result.RouteValues["ReturnUrl"].Should().Be(returnUrl);
             result.RouteValues["RememberMe"].Should().Be(model.RememberMe);
             signInManagerMock.Verify(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false));
         }
 
-        /// <summary>TODO The login post test failure.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task LoginPostTestFailure()
         {
@@ -157,20 +144,19 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            var returnUrl = "http://myurl";
+            var returnUrl = fixture.Create<string>("http://myurl");
 
             // act
             var result = await target.Login(model, returnUrl) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Model.Should().BeSameAs(model);
             target.ModelState.IsValid.Should().BeFalse();
             target.ModelState[string.Empty].Errors.Should().Contain(it => it.ErrorMessage == "Invalid login attempt.");
             signInManagerMock.Verify(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false));
         }
 
-        /// <summary>TODO The login post test model state invalid.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task LoginPostTestModelStateInvalid()
         {
@@ -183,13 +169,14 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            target.ModelState.AddModelError(string.Empty, "someError");
-            var returnUrl = "http://myurl";
+            target.ModelState.AddModelError(string.Empty, fixture.Create<string>());
+            var returnUrl = fixture.Create<string>("http://myurl");
 
             // act
             var result = await target.Login(model, returnUrl) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Model.Should().BeSameAs(model);
             target.ModelState.IsValid.Should().BeFalse();
             signInManagerMock.Verify(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false), Times.Never());
@@ -199,8 +186,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region VerifyCode
 
-        /// <summary>TODO The verify code get test has been verified.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodeGetTestHasBeenVerified()
         {
@@ -212,20 +197,19 @@ namespace MyApplication.Web.Controllers.Tests
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
        
-            string provider = "someProvider";
-            string returnUrl = "http://myurl"; 
-            bool remember = false;
+            string provider = fixture.Create<string>();
+            string returnUrl = fixture.Create<string>("http://myurl"); 
+            bool remember = fixture.Create<bool>();
 
             // act
             var result = await target.VerifyCode(provider, returnUrl, remember) as ViewResult;
-            
+
             // assert
+            result.Should().NotBeNull();
             result.Model.ShouldBeEquivalentTo(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = remember });
             signInManagerMock.Verify(it => it.HasBeenVerifiedAsync());
         }
 
-        /// <summary>TODO The verify code get test has not been verified.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodeGetTestHasNotBeenVerified()
         {
@@ -237,26 +221,25 @@ namespace MyApplication.Web.Controllers.Tests
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
 
-            string provider = "someProvider";
-            string returnUrl = "http://myurl"; 
-            bool remember = false;
+            string provider = fixture.Create<string>();
+            string returnUrl = fixture.Create<string>("http://myurl");
+            bool remember = fixture.Create<bool>();
 
             // act
             var result = await target.VerifyCode(provider, returnUrl, remember) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Error");
             signInManagerMock.Verify(it => it.HasBeenVerifiedAsync());
         }
 
-        /// <summary>TODO The verify code post test success url local.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodePostTestSuccessUrlLocal()
         {
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            var model = fixture.Build<VerifyCodeViewModel>().With(it => it.ReturnUrl, "/localurl").Create();
+            var model = fixture.Build<VerifyCodeViewModel>().With(it => it.ReturnUrl, fixture.Create<string>("/localurl")).Create();
             signInManagerMock.Setup(
                 it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser))
                 .Returns(Task.FromResult(SignInStatus.Success));
@@ -268,19 +251,18 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.VerifyCode(model) as RedirectResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Url.Should().Be(model.ReturnUrl);
             signInManagerMock.Verify(
                 it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser));
         }
 
-        /// <summary>TODO The verify code post test success url remote.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodePostTestSuccessUrlRemote()
         {
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            var model = fixture.Build<VerifyCodeViewModel>().With(it => it.ReturnUrl, "http://localurl").Create();
+            var model = fixture.Build<VerifyCodeViewModel>().With(it => it.ReturnUrl, fixture.Create<string>("http://localurl")).Create();
             signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).Returns(Task.FromResult(SignInStatus.Success));
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
@@ -290,13 +272,12 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.VerifyCode(model) as RedirectToRouteResult;
 
             // assert
-            result.RouteValues["controller"].Should().Be("Publications");
+            result.Should().NotBeNull();
+            result.RouteValues["controller"].Should().Be("Some");
             result.RouteValues["action"].Should().Be("Index");
             signInManagerMock.Verify(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser));
         }
 
-        /// <summary>TODO The verify code post test locked out.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodePostTestLockedOut()
         {
@@ -312,12 +293,11 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.VerifyCode(model) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Lockout");
             signInManagerMock.Verify(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser));
         }
 
-        /// <summary>TODO The verify code test failure.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodeTestFailure()
         {
@@ -333,14 +313,13 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.VerifyCode(model) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Model.Should().BeSameAs(model);
             target.ModelState.IsValid.Should().BeFalse();
             target.ModelState[string.Empty].Errors.Should().Contain(it => it.ErrorMessage == "Invalid code.");
             signInManagerMock.Verify(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser));
         }
 
-        /// <summary>TODO The verify code test model state invalid.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task VerifyCodeTestModelStateInvalid()
         {
@@ -352,12 +331,13 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-            target.ModelState.AddModelError(string.Empty, "someError");
+            target.ModelState.AddModelError(string.Empty, fixture.Create<string>());
 
             // act
             var result = await target.VerifyCode(model) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Model.Should().BeSameAs(model);
             target.ModelState.IsValid.Should().BeFalse();
             signInManagerMock.Verify(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser), Times.Never());
@@ -367,7 +347,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region Register
 
-        /// <summary>TODO The register get test.</summary>
         [TestMethod]
         public void RegisterGetTest()
         {
@@ -379,14 +358,14 @@ namespace MyApplication.Web.Controllers.Tests
             var result = target.Register() as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
         }
 
-        /// <summary>TODO The register post test model state valid local.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task RegisterPostTestModelStateValidLocal()
         {
+            // arrange
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<RegisterViewModel>().Create();
@@ -403,14 +382,13 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.Register(model) as RedirectToRouteResult;
 
             // assert
-            result.RouteValues["controller"].Should().Be("Publications");
+            result.Should().NotBeNull();
+            result.RouteValues["controller"].Should().Be("Some");
             result.RouteValues["action"].Should().Be("Index");
             userManagerMock.Verify(it => it.CreateAsync(It.IsAny<ApplicationUser>(), model.Password));
             signInManagerMock.Verify(it => it.SignInAsync(It.IsAny<ApplicationUser>(), false, false));
         }
 
-        /// <summary>TODO The register test failure.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task RegisterTestFailure()
         {
@@ -426,16 +404,15 @@ namespace MyApplication.Web.Controllers.Tests
 
             // act
             var result = await target.Register(model) as ViewResult;
-            
+
             // assert
+            result.Should().NotBeNull();
             result.Model.Should().BeSameAs(model);
             target.ModelState.IsValid.Should().BeFalse();
             userManagerMock.Verify(it => it.CreateAsync(It.IsAny<ApplicationUser>(), model.Password));
             signInManagerMock.Verify(it => it.SignInAsync(It.IsAny<ApplicationUser>(), false, false), Times.Never());
         }
 
-        /// <summary>TODO The register test model state invalid.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task RegisterTestModelStateInvalid()
         {
@@ -450,13 +427,13 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
-
-            target.ModelState.AddModelError(string.Empty, "someError");
+            target.ModelState.AddModelError(string.Empty, fixture.Create<string>());
 
             // act
             var result = await target.Register(model) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.Model.Should().BeSameAs(model);
             target.ModelState.IsValid.Should().BeFalse();
             userManagerMock.Verify(it => it.CreateAsync(user, model.Password), Times.Never());
@@ -467,8 +444,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region ConfirmEmail
 
-        /// <summary>TODO The confirm email test non null succeeded.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ConfirmEmailTestNonNullSucceeded()
         {
@@ -476,8 +451,8 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var target = fixture.Create<AccountController>();
-            var userId = "someUsr";
-            var code = "someCode";
+            var userId = fixture.Create<string>();
+            var code = fixture.Create<string>();
             userManagerMock.Setup(it => it.ConfirmEmailAsync(userId, code))
                 .Returns(Task.FromResult(IdentityResult.Success));
 
@@ -485,12 +460,11 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ConfirmEmail(userId, code) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("ConfirmEmail");
             userManagerMock.Verify(it => it.ConfirmEmailAsync(userId, code));
         }
 
-        /// <summary>TODO The confirm email test non null failed.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ConfirmEmailTestNonNullFailed()
         {
@@ -498,50 +472,49 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var target = fixture.Create<AccountController>();
-            var userId = "someUsr";
-            var code = "someCode";
+            var userId = fixture.Create<string>();
+            var code = fixture.Create<string>();
             userManagerMock.Setup(it => it.ConfirmEmailAsync(userId, code))
-                .Returns(Task.FromResult(IdentityResult.Failed("someResult")));
+                .Returns(Task.FromResult(IdentityResult.Failed(fixture.Create<string>())));
 
             // act
             var result = await target.ConfirmEmail(userId, code) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Error");
             userManagerMock.Verify(it => it.ConfirmEmailAsync(userId, code));
         }
 
-        /// <summary>TODO The confirm email test null succeeded.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ConfirmEmailTestNullSucceeded()
         {
             // arrange
             var fixture = new ControllerAutoFixture();
             var target = fixture.Create<AccountController>();
-            var code = "someCode";
-            
+            var code = fixture.Create<string>();
+
             // act
             var result = await target.ConfirmEmail(null, code) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Error");
         }
 
-        /// <summary>TODO The confirm email test code null succeeded.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ConfirmEmailTestCodeNullSucceeded()
         {
             // arrange
             var fixture = new ControllerAutoFixture();
             var target = fixture.Create<AccountController>();
-            var userId = "someUsr";
+            var userId = fixture.Create<string>();
 
             // act
             var result = await target.ConfirmEmail(userId, null) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Error");
         }
 
@@ -549,7 +522,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region Forgot password
 
-        /// <summary>TODO The forgot password test.</summary>
         [TestMethod]
         public void ForgotPasswordTest()
         {
@@ -561,11 +533,10 @@ namespace MyApplication.Web.Controllers.Tests
             var result = target.ForgotPassword() as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
         }
 
-        /// <summary>TODO The forgot password post test.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ForgotPasswordPostTest()
         {
@@ -583,11 +554,10 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ForgotPassword(viewModel) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("ForgotPasswordConfirmation");
         }
 
-        /// <summary>TODO The forgot password post test not email confirmed.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ForgotPasswordPostTestNotEmailConfirmed()
         {
@@ -605,12 +575,11 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ForgotPassword(viewModel) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
             result.Model.Should().BeSameAs(viewModel);
         }
 
-        /// <summary>TODO The forgot password post test user null.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ForgotPasswordPostTestUserNull()
         {
@@ -625,11 +594,10 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ForgotPassword(viewModel) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("ForgotPasswordConfirmation");
         }
 
-        /// <summary>TODO The forgot password post test invalid model state.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ForgotPasswordPostTestInvalidModelState()
         {
@@ -637,12 +605,13 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var viewModel = fixture.Build<ForgotPasswordViewModel>().Create();
             var target = fixture.Create<AccountController>();
-            target.ModelState.AddModelError(string.Empty, "someErrors");
+            target.ModelState.AddModelError(string.Empty, fixture.Create<string>());
 
             // act
             var result = await target.ForgotPassword(viewModel) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
             result.Model.Should().BeSameAs(viewModel);
         }
@@ -651,7 +620,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region ForgotPasswordConfirmation
 
-        /// <summary>TODO The forgot password confirmation test.</summary>
         [TestMethod]
         public void ForgotPasswordConfirmationTest()
         {
@@ -663,6 +631,7 @@ namespace MyApplication.Web.Controllers.Tests
             var result = target.ForgotPasswordConfirmation() as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
         }
 
@@ -670,7 +639,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region ResetPassword
 
-        /// <summary>TODO The reset password test.</summary>
         [TestMethod]
         public void ResetPasswordTest()
         {
@@ -679,13 +647,13 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
 
             // act
-            var result = target.ResetPassword("someCode") as ViewResult;
+            var result = target.ResetPassword(fixture.Create<string>()) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
         }
 
-        /// <summary>TODO The reset password test null.</summary>
         [TestMethod]
         public void ResetPasswordTestNull()
         {
@@ -697,11 +665,10 @@ namespace MyApplication.Web.Controllers.Tests
             var result = target.ResetPassword((string)null) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().Be("Error");
         }
 
-        /// <summary>TODO The reset password test post.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ResetPasswordTestPost()
         {
@@ -719,13 +686,12 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ResetPassword(model) as RedirectToRouteResult;
 
             // assert
+            result.Should().NotBeNull();
             result.RouteValues["action"].Should().Be("ResetPasswordConfirmation");
             result.RouteValues["controller"].Should().Be("Account");
             userManagerMock.Verify(it=>it.ResetPasswordAsync(user.Id, model.Code, model.Password));
         }
 
-        /// <summary>TODO The reset password result failed test post.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ResetPasswordResultFailedTestPost()
         {
@@ -743,12 +709,11 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ResetPassword(model) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
             userManagerMock.Verify(it => it.ResetPasswordAsync(user.Id, model.Code, model.Password));
         }
 
-        /// <summary>TODO The reset password test user null post.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ResetPasswordTestUserNullPost()
         {
@@ -763,12 +728,11 @@ namespace MyApplication.Web.Controllers.Tests
             var result = await target.ResetPassword(model) as RedirectToRouteResult;
 
             // assert
+            result.Should().NotBeNull();
             result.RouteValues["action"].Should().Be("ResetPasswordConfirmation");
             result.RouteValues["controller"].Should().Be("Account");
         }
 
-        /// <summary>TODO The reset password test model invalid post.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [TestMethod]
         public async Task ResetPasswordTestModelInvalidPost()
         {
@@ -776,12 +740,13 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var model = fixture.Build<ResetPasswordViewModel>().Create();
             var target = fixture.Create<AccountController>();
-            target.ModelState.AddModelError(string.Empty, "TestError");
+            target.ModelState.AddModelError(string.Empty, fixture.Create<string>());
 
             // act
             var result = await target.ResetPassword(model) as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
             result.Model.Should().BeSameAs(model);
         }
@@ -790,7 +755,6 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region ResetPasswordConfirmation
 
-        /// <summary>TODO The reset password confirmation test.</summary>
         [TestMethod]
         public void ResetPasswordConfirmationTest()
         {
@@ -802,49 +766,455 @@ namespace MyApplication.Web.Controllers.Tests
             var result = target.ResetPasswordConfirmation() as ViewResult;
 
             // assert
+            result.Should().NotBeNull();
             result.ViewName.Should().BeEmpty();
         }
 
         #endregion ResetPasswordConfirmation
 
-        /// <summary>TODO The external login test.</summary>
+        #region ExternalLogin
+
         [TestMethod]
         public void ExternalLoginTest()
         {
-            Assert.Inconclusive();
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var provider = fixture.Create<string>();
+            var returnUrl = fixture.Create<string>();
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = target.ExternalLogin(provider, returnUrl) as HttpUnauthorizedResult;
+
+            // assert
+            result.Should().NotBeNull();
         }
 
-        /// <summary>TODO The send code test.</summary>
-        [TestMethod()]
-        public void SendCodeTest()
+        #endregion ExternalLogin
+
+        #region SendCode
+
+        [TestMethod]
+        public async Task SendCodeTestUserIdNull()
         {
-            Assert.Inconclusive();
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var rememberMe = fixture.Create<bool>();
+            var returnUrl = fixture.Create<string>();
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.GetVerifiedUserIdAsync()).Returns(Task.FromResult<string>(null));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.SendCode(returnUrl, rememberMe) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewName.Should().Be("Error");
         }
 
-        /// <summary>TODO The send code test 1.</summary>
-        [TestMethod()]
-        public void SendCodeTest1()
+        [TestMethod]
+        public async Task SendCodeTest()
         {
-            Assert.Inconclusive();
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var rememberMe = fixture.Create<bool>();
+            var returnUrl = fixture.Create<string>();
+            var userId = fixture.Create<string>();
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.GetVerifiedUserIdAsync()).Returns(Task.FromResult(userId));
+            var userFactorsMock = fixture.Freeze<Mock<IApplicationUserManager>>();
+            var providers = fixture.CreateMany<string>().ToList() as IList<string>;
+            userFactorsMock.Setup(it => it.GetValidTwoFactorProvidersAsync(userId)).Returns(Task.FromResult(providers));
+            var factorOptions = providers.Select(
+                 purpose => new SelectListItem
+                 {
+                     Text = purpose,
+                     Value = purpose
+                 }).ToList();
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.SendCode(returnUrl, rememberMe) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewName.Should().BeNullOrEmpty();
+            result.Model.ShouldBeEquivalentTo(new SendCodeViewModel
+            {
+                Providers = factorOptions,
+                ReturnUrl = returnUrl,
+                RememberMe = rememberMe
+            });
         }
 
-        /// <summary>TODO The external login callback test.</summary>
-        [TestMethod()]
-        public void ExternalLoginCallbackTest()
+        [TestMethod]
+        public async Task SendCodeTestPostModelStateInvalid()
         {
-            Assert.Inconclusive();
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<SendCodeViewModel>().Create();
+            var target = fixture.Create<AccountController>();
+            target.ModelState.AddModelError(fixture.Create<string>(), fixture.Create<string>());
+           
+            // act
+            var result = await target.SendCode(model) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewName.Should().BeNullOrEmpty();
+            result.ViewData.Should().BeEmpty();
+        }
+        
+        [TestMethod]
+        public async Task SendCodeTestPostSendTwoFactoryCodeFalse()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<SendCodeViewModel>().Create();
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.SendTwoFactorCodeAsync(model.SelectedProvider))
+                             .Returns(Task.FromResult(false));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.SendCode(model) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewName.Should().Be("Error");
         }
 
-        /// <summary>TODO The external login confirmation test.</summary>
-        [TestMethod()]
-        public void ExternalLoginConfirmationTest()
+        [TestMethod]
+        public async Task SendCodeTestPost()
         {
-            Assert.Inconclusive();
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<SendCodeViewModel>().Create();
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.SendTwoFactorCodeAsync(model.SelectedProvider))
+                             .Returns(Task.FromResult(true));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.SendCode(model) as RedirectToRouteResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.RouteValues.Should().Contain("action", "VerifyCode");
+            result.RouteValues.Should().Contain("Provider", model.SelectedProvider);
+            result.RouteValues.Should().Contain("ReturnUrl", model.ReturnUrl);
+            result.RouteValues.Should().Contain("RememberMe", model.RememberMe);
         }
+
+        #endregion SendCode
+
+        #region ExternalLoginCallback
+
+        [TestMethod]
+        public async Task ExternalLoginCallbackTestLoginInfoNull()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var returnUrl = fixture.Create<string>();
+            ExternalLoginInfo loginInfo = null;
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginCallback(returnUrl) as RedirectToRouteResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.RouteValues.Should().Contain("action", "Login");
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginCallbackTestLoginInfoSuccess()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var returnUrl = fixture.Create<string>("/myurl");
+            var loginInfo =
+                fixture.Build<ExternalLoginInfo>()
+                    .Without(it => it.ExternalIdentity)
+                    .Without(it => it.Login)
+                    .Create();
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
+                             .Returns(Task.FromResult(SignInStatus.Success));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginCallback(returnUrl) as RedirectResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.Url.Should().Be(returnUrl);
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginCallbackTestLoginInfoLockedOut()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var returnUrl = fixture.Create<string>();
+            var loginInfo =
+               fixture.Build<ExternalLoginInfo>()
+                   .Without(it => it.ExternalIdentity)
+                   .Without(it => it.Login)
+                   .Create();
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
+                             .Returns(Task.FromResult(SignInStatus.LockedOut));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginCallback(returnUrl) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewName.Should().Contain("Lockout");
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginCallbackTestLoginInfoRequiresVerification()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var returnUrl = fixture.Create<string>();
+            var loginInfo =
+                fixture.Build<ExternalLoginInfo>()
+                    .Without(it => it.ExternalIdentity)
+                    .Without(it => it.Login)
+                    .Create();
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
+                             .Returns(Task.FromResult(SignInStatus.RequiresVerification));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginCallback(returnUrl) as RedirectToRouteResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.RouteValues.Should().Contain("action", "SendCode");
+            result.RouteValues.Should().Contain("ReturnUrl", returnUrl);
+            result.RouteValues.Should().Contain("RememberMe", false);
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginCallbackTestLoginInfoFailure()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var returnUrl = fixture.Create<string>();
+            var loginInfo =
+                fixture.Build<ExternalLoginInfo>()
+                    .Without(it => it.ExternalIdentity)
+                    .Create();
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
+                             .Returns(Task.FromResult(SignInStatus.Failure));
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginCallback(returnUrl) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewData.Should().Contain("ReturnUrl", returnUrl);
+            result.ViewData.Should().Contain("LoginProvider", loginInfo.Login.LoginProvider);
+            result.ViewName.Should().Contain("ExternalLoginConfirmation");
+            result.Model.ShouldBeEquivalentTo(
+                new ExternalLoginConfirmationViewModel
+                    {
+                        Email = loginInfo.Email
+                    });
+        }
+
+        #endregion ExternalLoginCallback
+
+        #region ExternalLoginConfirmation
+
+        [TestMethod]
+        public async Task ExternalLoginConfirmationTestIsAuthenticated()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<ExternalLoginConfirmationViewModel>().Create();
+            var returnUrl = fixture.Create<string>();
+            fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(true);
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginConfirmation(model, returnUrl) as RedirectToRouteResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.RouteValues.Should().Contain("action", "Index");
+            result.RouteValues.Should().Contain("controller", "Manage");
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginConfirmationTestCreateFailed()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<ExternalLoginConfirmationViewModel>().Create();
+            var returnUrl = fixture.Create<string>("/myurl");
+            var externalLoginInfo = fixture.Build<ExternalLoginInfo>().Without(it => it.ExternalIdentity).Create();
+            fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(false);
+
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(externalLoginInfo));
+
+            var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
+            var userId = fixture.Create<string>();
+            var error = fixture.Create<string>();
+
+            ApplicationUser createdUser = null;
+            userManagerMock.Setup(
+                it =>
+                it.CreateAsync(
+                    It.IsAny<ApplicationUser>()))
+                           .Returns<ApplicationUser>(
+                               user =>
+                               {
+                                   createdUser = user;
+                                   user.Id = userId;
+                                   return Task.FromResult(IdentityResult.Failed(error));
+                               });
+
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginConfirmation(model, returnUrl) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            createdUser.Should().NotBeNull();
+            createdUser.UserName.Should().Be(model.Email);
+            createdUser.Email.Should().Be(model.Email);
+            result.ViewName.Should().BeNullOrEmpty();
+            result.Model.Should().BeSameAs(model);
+            result.ViewData.Should().Contain("ReturnUrl", returnUrl);
+            target.ModelState.IsValid.Should().BeFalse();
+            target.ModelState[string.Empty].Errors.Should().ContainSingle(it => it.ErrorMessage == error);
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginConfirmationTestAddLoginFailed()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<ExternalLoginConfirmationViewModel>().Create();
+            var returnUrl = fixture.Create<string>("/myurl");
+            var externalLoginInfo = fixture.Build<ExternalLoginInfo>().Without(it => it.ExternalIdentity).Create();
+            fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(false);
+
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(externalLoginInfo));
+
+            var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
+            var userId = fixture.Create<string>();
+            ApplicationUser createdUser = null;
+            userManagerMock.Setup(
+                it =>
+                it.CreateAsync(
+                    It.IsAny<ApplicationUser>()))
+                           .Returns<ApplicationUser>(
+                               user =>
+                               {
+                                   createdUser = user;
+                                   user.Id = userId;
+                                   return Task.FromResult(IdentityResult.Success);
+                               });
+            var error = fixture.Create<string>();
+            userManagerMock.Setup(
+                it =>
+                it.AddLoginAsync(userId, externalLoginInfo.Login))
+                           .Returns(Task.FromResult(IdentityResult.Failed(error)));
+
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginConfirmation(model, returnUrl) as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            createdUser.Should().NotBeNull();
+            createdUser.UserName.Should().Be(model.Email);
+            createdUser.Email.Should().Be(model.Email);
+            result.ViewName.Should().BeNullOrEmpty();
+            result.Model.Should().BeSameAs(model);
+            result.ViewData.Should().Contain("ReturnUrl", returnUrl);
+            target.ModelState.IsValid.Should().BeFalse();
+            target.ModelState[ string.Empty ].Errors.Should().ContainSingle(it => it.ErrorMessage == error);
+        }
+
+        [TestMethod]
+        public async Task ExternalLoginConfirmationTest()
+        {
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var model = fixture.Build<ExternalLoginConfirmationViewModel>().Create();
+            var returnUrl = fixture.Create<string>("/myurl");
+            var externalLoginInfo = fixture.Build<ExternalLoginInfo>().Without(it => it.ExternalIdentity).Create();
+            fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(false);
+
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(externalLoginInfo));
+
+            var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
+            var userId = fixture.Create<string>();
+            ApplicationUser createdUser = null;
+            userManagerMock.Setup(
+                it =>
+                it.CreateAsync(
+                    It.IsAny<ApplicationUser>()))
+                           .Returns<ApplicationUser>(
+                               user =>
+                                   {
+                                       createdUser = user;
+                                       user.Id = userId;
+                                       return Task.FromResult(IdentityResult.Success);
+                                   });
+            userManagerMock.Setup(
+                it =>
+                it.AddLoginAsync(userId, externalLoginInfo.Login))
+                           .Returns(Task.FromResult(IdentityResult.Success));
+
+            var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
+            signInManagerMock.Setup(it => it.SignInAsync(It.Is<ApplicationUser>(user=>user==createdUser), false, false)).Returns(
+                Task.FromResult(default(object)));
+                var target = fixture.Create<AccountController>();
+
+            // act
+            var result = await target.ExternalLoginConfirmation(model, returnUrl) as RedirectResult;
+
+            // assert
+            result.Should().NotBeNull();
+            createdUser.Should().NotBeNull();
+            createdUser.UserName.Should().Be(model.Email);
+            createdUser.Email.Should().Be(model.Email);
+            result.Url.Should().Be(returnUrl);
+            signInManagerMock.Verify(it=>it.SignInAsync(It.Is<ApplicationUser>(user => user == createdUser), false, false));
+        }
+
+        #endregion ExternalLoginConfirmation
 
         #region LogOff
 
-        /// <summary>TODO The log off test.</summary>
         [TestMethod]
         public void LogOffTest()
         {
@@ -856,15 +1226,15 @@ namespace MyApplication.Web.Controllers.Tests
             var result = target.LogOff() as RedirectToRouteResult;
 
             // assert
+            result.Should().NotBeNull();
             result.RouteValues["action"].Should().Be("Index");
-            result.RouteValues["controller"].Should().Be("Publications");
+            result.RouteValues["controller"].Should().Be("Some");
         }
 
         #endregion LogOff
 
         #region Dispose
 
-        /// <summary>TODO The dispose test.</summary>
         [TestMethod]
         public void DisposeTest()
         {
@@ -884,11 +1254,24 @@ namespace MyApplication.Web.Controllers.Tests
 
         #endregion Dispose
 
-        /// <summary>TODO The external login failure test.</summary>
-        [TestMethod()]
+        #region ExternalLoginFailure
+
+        [TestMethod]
         public void ExternalLoginFailureTest()
         {
-            Assert.Inconclusive();
+            // arrange
+            var fixture = new ControllerAutoFixture();
+            var target = fixture.Create<AccountController>();
+
+            // act
+            var result = target.ExternalLoginFailure() as ViewResult;
+
+            // assert
+            result.Should().NotBeNull();
+            result.ViewName.Should().BeNullOrEmpty();
+            result.ViewData.Should().BeEmpty();
         }
+
+        #endregion ExternalLoginFailure
     }
 }

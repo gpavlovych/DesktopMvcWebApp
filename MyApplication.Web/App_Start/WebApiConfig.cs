@@ -1,15 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="WebApiConfig.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The count o data routing convention.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.OData.Builder;
@@ -25,14 +15,9 @@ namespace MyApplication.Web
     using Microsoft.Data.Edm;
     using Microsoft.Data.Edm.Library;
 
-    /// <summary>TODO The count o data routing convention.</summary>
+    [ExcludeFromCodeCoverage]
     public class CountODataRoutingConvention : EntitySetRoutingConvention
     {
-        /// <summary>TODO The select action.</summary>
-        /// <param name="odataPath">TODO The odata path.</param>
-        /// <param name="controllerContext">TODO The controller context.</param>
-        /// <param name="actionMap">TODO The action map.</param>
-        /// <returns>The <see cref="string"/>.</returns>
         public override string SelectAction(ODataPath odataPath, HttpControllerContext controllerContext, ILookup<string, HttpActionDescriptor> actionMap)
         {
             if (controllerContext.Request.Method == HttpMethod.Get && odataPath.PathTemplate == "~/entityset/$count")
@@ -47,15 +32,9 @@ namespace MyApplication.Web
         }
     }
 
-    /// <summary>TODO The count o data path handler.</summary>
+    [ExcludeFromCodeCoverage]
     public class CountODataPathHandler : DefaultODataPathHandler
     {
-        /// <summary>TODO The parse at entity collection.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <param name="previous">TODO The previous.</param>
-        /// <param name="previousEdmType">TODO The previous edm type.</param>
-        /// <param name="segment">TODO The segment.</param>
-        /// <returns>The <see cref="ODataPathSegment"/>.</returns>
         protected override ODataPathSegment ParseAtEntityCollection(IEdmModel model, ODataPathSegment previous, IEdmType previousEdmType, string segment)
         {
             if (segment == "$count")
@@ -67,10 +46,9 @@ namespace MyApplication.Web
         }
     }
 
-    /// <summary>TODO The count path segment.</summary>
+    [ExcludeFromCodeCoverage]
     public class CountPathSegment : ODataPathSegment
     {
-        /// <summary>Gets the segment kind.</summary>
         public override string SegmentKind
         {
             get
@@ -79,35 +57,25 @@ namespace MyApplication.Web
             }
         }
 
-        /// <summary>TODO The get edm type.</summary>
-        /// <param name="previousEdmType">TODO The previous edm type.</param>
-        /// <returns>The <see cref="IEdmType"/>.</returns>
         public override IEdmType GetEdmType(IEdmType previousEdmType)
         {
             return EdmCoreModel.Instance.FindDeclaredType("Edm.Int32");
         }
 
-        /// <summary>TODO The get entity set.</summary>
-        /// <param name="previousEntitySet">TODO The previous entity set.</param>
-        /// <returns>The <see cref="IEdmEntitySet"/>.</returns>
         public override IEdmEntitySet GetEntitySet(IEdmEntitySet previousEntitySet)
         {
             return previousEntitySet;
         }
 
-        /// <summary>TODO The to string.</summary>
-        /// <returns>The <see cref="string"/>.</returns>
         public override string ToString()
         {
             return "$count";
         }
     }
 
-    /// <summary>TODO The web api config.</summary>
+    [ExcludeFromCodeCoverage]
     public static class WebApiConfig
     {
-        /// <summary>TODO The register.</summary>
-        /// <param name="config">TODO The config.</param>
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services

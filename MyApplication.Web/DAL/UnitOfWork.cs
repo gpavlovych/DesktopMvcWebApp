@@ -1,27 +1,12 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnitOfWork.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The unit of work.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
 using System;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MyApplication.Web.Controllers
 {
-    /// <summary>TODO The unit of work.</summary>
     [ExcludeFromCodeCoverage]
     public sealed class UnitOfWork : IUnitOfWork
     {
-        /// <summary>
-        /// The DbContext
-        /// </summary>
         private DbContext _dbContext;
 
         /// <summary>Initializes a new instance of the UnitOfWork class.</summary>

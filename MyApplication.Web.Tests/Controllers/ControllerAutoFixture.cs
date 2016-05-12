@@ -1,14 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ControllerAutoFixture.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The controller auto fixture.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
 using System.Collections.Specialized;
 using System.Security.Principal;
 using System.Web;
@@ -19,10 +8,8 @@ using Ploeh.AutoFixture;
 
 namespace MyApplication.Web.Tests.Controllers
 {
-    /// <summary>TODO The controller auto fixture.</summary>
     public class ControllerAutoFixture : TestAutoFixture
     {
-        /// <summary>Initializes a new instance of the <see cref="ControllerAutoFixture"/> class.</summary>
         public ControllerAutoFixture()
         {
             this.Customize<ControllerContext>(c => c.Without(x => x.DisplayMode));
@@ -41,10 +28,15 @@ namespace MyApplication.Web.Tests.Controllers
 
             var context = new Mock<HttpContextBase>();
             requestContext.Setup(r => r.HttpContext).Returns(context.Object);
+            requestContext.Setup(r => r.RouteData).Returns(
+                new RouteData()
+                    {
+                    
+                    });
 
             this.UserMock = new Mock<IPrincipal>();
-            var identityMock = new Mock<IIdentity>();
-            this.UserMock.Setup(it => it.Identity).Returns(identityMock.Object);
+            this.IdentityMock = new Mock<IIdentity>();
+            this.UserMock.Setup(it => it.Identity).Returns(IdentityMock.Object);
             context.Setup(it => it.User).Returns(this.UserMock.Object);
             context.Setup(ctx => ctx.Request).Returns(request.Object);
             context.Setup(ctx => ctx.Response).Returns(response.Object);
@@ -58,7 +50,8 @@ namespace MyApplication.Web.Tests.Controllers
             this.Register(() => new UrlHelper(context.Object.Request.RequestContext));
         }
 
-        /// <summary>Gets the user mock.</summary>
         public Mock<IPrincipal> UserMock { get; }
+
+        public Mock<IIdentity> IdentityMock { get; }
     }
 }

@@ -1,15 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ManageController.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The manage controller.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -19,19 +8,12 @@ using Microsoft.Owin.Security;
 
 namespace MyApplication.Web.Controllers
 {
-    /// <summary>TODO The manage controller.</summary>
     [Authorize]
     public class ManageController : Controller
     {
-        /// <summary>TODO The _sign in manager.</summary>
         private IApplicationSignInManager _signInManager;
-
-        /// <summary>TODO The _user manager.</summary>
         private IApplicationUserManager _userManager;
 
-        /// <summary>Initializes a new instance of the <see cref="ManageController"/> class.</summary>
-        /// <param name="userManager">TODO The user manager.</param>
-        /// <param name="signInManager">TODO The sign in manager.</param>
         public ManageController(IApplicationUserManager userManager, IApplicationSignInManager signInManager)
         {
             this._userManager = userManager;
@@ -39,9 +21,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/Index
-        /// <summary>TODO The index.</summary>
-        /// <param name="message">TODO The message.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             this.ViewBag.StatusMessage = message == ManageMessageId.ChangePasswordSuccess
@@ -72,10 +51,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Manage/RemoveLogin
-        /// <summary>TODO The remove login.</summary>
-        /// <param name="loginProvider">TODO The login provider.</param>
-        /// <param name="providerKey">TODO The provider key.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
@@ -110,17 +85,12 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/AddPhoneNumber
-        /// <summary>TODO The add phone number.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult AddPhoneNumber()
         {
             return this.View();
         }
 
         // POST: /Manage/AddPhoneNumber
-        /// <summary>TODO The add phone number.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
@@ -153,8 +123,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Manage/EnableTwoFactorAuthentication
-        /// <summary>TODO The enable two factor authentication.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EnableTwoFactorAuthentication()
@@ -170,8 +138,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Manage/DisableTwoFactorAuthentication
-        /// <summary>TODO The disable two factor authentication.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DisableTwoFactorAuthentication()
@@ -187,9 +153,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/VerifyPhoneNumber
-        /// <summary>TODO The verify phone number.</summary>
-        /// <param name="phoneNumber">TODO The phone number.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
         {
             var code =
@@ -206,9 +169,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Manage/VerifyPhoneNumber
-        /// <summary>TODO The verify phone number.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
@@ -243,8 +203,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/RemovePhoneNumber
-        /// <summary>TODO The remove phone number.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         public async Task<ActionResult> RemovePhoneNumber()
         {
             var result = await this._userManager.SetPhoneNumberAsync(this.User.Identity.GetUserId(), null);
@@ -273,17 +231,12 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/ChangePassword
-        /// <summary>TODO The change password.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult ChangePassword()
         {
             return this.View();
         }
 
         // POST: /Manage/ChangePassword
-        /// <summary>TODO The change password.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -320,17 +273,12 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/SetPassword
-        /// <summary>TODO The set password.</summary>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         public ActionResult SetPassword()
         {
             return this.View();
         }
 
         // POST: /Manage/SetPassword
-        /// <summary>TODO The set password.</summary>
-        /// <param name="model">TODO The model.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
@@ -362,9 +310,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/ManageLogins
-        /// <summary>TODO The manage logins.</summary>
-        /// <param name="message">TODO The message.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             this.ViewBag.StatusMessage = message == ManageMessageId.RemoveLoginSuccess
@@ -393,9 +338,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // POST: /Manage/LinkLogin
-        /// <summary>TODO The link login.</summary>
-        /// <param name="provider">TODO The provider.</param>
-        /// <returns>The <see cref="ActionResult"/>.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LinkLogin(string provider)
@@ -408,8 +350,6 @@ namespace MyApplication.Web.Controllers
         }
 
         // GET: /Manage/LinkLoginCallback
-        /// <summary>TODO The link login callback.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         public async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo =
@@ -435,8 +375,6 @@ namespace MyApplication.Web.Controllers
                                });
         }
 
-        /// <summary>TODO The dispose.</summary>
-        /// <param name="disposing">TODO The disposing.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && this._userManager != null)
@@ -450,10 +388,8 @@ namespace MyApplication.Web.Controllers
         #region Helpers
 
         // Used for XSRF protection when adding external logins
-        /// <summary>TODO The xsr f_ key.</summary>
         private const string XSRF_KEY = "XsrfId";
 
-        /// <summary>Gets the authentication manager.</summary>
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -462,8 +398,6 @@ namespace MyApplication.Web.Controllers
             }
         }
 
-        /// <summary>TODO The add errors.</summary>
-        /// <param name="result">TODO The result.</param>
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -472,8 +406,6 @@ namespace MyApplication.Web.Controllers
             }
         }
 
-        /// <summary>TODO The has password.</summary>
-        /// <returns>The <see cref="Task"/>.</returns>
         private async Task<bool> HasPassword()
         {
             var user = await this._userManager.FindByIdAsync(this.User.Identity.GetUserId());
@@ -485,28 +417,14 @@ namespace MyApplication.Web.Controllers
             return false;
         }
 
-        /// <summary>TODO The manage message id.</summary>
         public enum ManageMessageId
         {
-            /// <summary>TODO The add phone success.</summary>
             AddPhoneSuccess, 
-
-            /// <summary>TODO The change password success.</summary>
             ChangePasswordSuccess, 
-
-            /// <summary>TODO The set two factor success.</summary>
             SetTwoFactorSuccess, 
-
-            /// <summary>TODO The set password success.</summary>
             SetPasswordSuccess, 
-
-            /// <summary>TODO The remove login success.</summary>
             RemoveLoginSuccess, 
-
-            /// <summary>TODO The remove phone success.</summary>
             RemovePhoneSuccess, 
-
-            /// <summary>TODO The error.</summary>
             Error
         }
 

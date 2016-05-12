@@ -1,15 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnityConfig.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The unity config.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -20,13 +10,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using Microsoft.Practices.Unity;
+using MyApplication.Web.Services;
 
 namespace MyApplication.Web
 {
-    /// <summary>TODO The unity config.</summary>
+    [ExcludeFromCodeCoverage]
     public static class UnityConfig
     {
-        /// <summary>TODO The register components.</summary>
         public static void RegisterComponents()
         {
             var container = new UnityContainer();
@@ -38,6 +28,7 @@ namespace MyApplication.Web
             container.RegisterType<ISettingsProvider, SettingsProvider>();
             container.RegisterType<DbContext, ApplicationDbContext>(new PerRequestLifetimeManager());
             container.RegisterType<IUnitOfWork, UnitOfWork>();
+            container.RegisterType<IUserService, UserService>();
             container.RegisterType(typeof (IGenericRepository<>), typeof(GenericRepository<>));
             container.RegisterType<IAuthenticationManager>(
                 new InjectionFactory(c => HttpContext.Current.GetOwinContext().Authentication));

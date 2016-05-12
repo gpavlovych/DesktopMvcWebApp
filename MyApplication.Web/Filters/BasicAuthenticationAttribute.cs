@@ -1,11 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BasicAuthenticationAttribute.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The basic authentication attribute.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 
 namespace MyApplication.Web.Filters
 {
@@ -18,17 +11,12 @@ namespace MyApplication.Web.Filters
     using System.Threading.Tasks;
     using System.Web.Http.Filters;
     using Results;
+    [ExcludeFromCodeCoverage]
 
-    /// <summary>TODO The basic authentication attribute.</summary>
     public abstract class BasicAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
-        /// <summary>Gets or sets the realm.</summary>
         public string Realm { get; set; }
 
-        /// <summary>TODO The authenticate async.</summary>
-        /// <param name="context">TODO The context.</param>
-        /// <param name="cancellationToken">TODO The cancellation token.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
             HttpRequestMessage request = context.Request;
@@ -81,17 +69,9 @@ namespace MyApplication.Web.Filters
             }
         }
 
-        /// <summary>TODO The authenticate async.</summary>
-        /// <param name="userName">TODO The user name.</param>
-        /// <param name="password">TODO The password.</param>
-        /// <param name="cancellationToken">TODO The cancellation token.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         protected abstract Task<IPrincipal> AuthenticateAsync(string userName, string password, 
                                                               CancellationToken cancellationToken);
 
-        /// <summary>TODO The extract user name and password.</summary>
-        /// <param name="authorizationParameter">TODO The authorization parameter.</param>
-        /// <returns>The <see cref="Tuple"/>.</returns>
         private static Tuple<string, string> ExtractUserNameAndPassword(string authorizationParameter)
         {
             byte[] credentialBytes;
@@ -143,18 +123,12 @@ namespace MyApplication.Web.Filters
             return new Tuple<string, string>(userName, password);
         }
 
-        /// <summary>TODO The challenge async.</summary>
-        /// <param name="context">TODO The context.</param>
-        /// <param name="cancellationToken">TODO The cancellation token.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
             this.Challenge(context);
             return Task.FromResult(0);
         }
 
-        /// <summary>TODO The challenge.</summary>
-        /// <param name="context">TODO The context.</param>
         private void Challenge(HttpAuthenticationChallengeContext context)
         {
             string parameter;
@@ -173,7 +147,6 @@ namespace MyApplication.Web.Filters
             context.ChallengeWith("Basic", parameter);
         }
 
-        /// <summary>Gets a value indicating whether allow multiple.</summary>
         public virtual bool AllowMultiple
         {
             get { return false; }

@@ -1,33 +1,21 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Configuration.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The configuration.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Diagnostics.CodeAnalysis;
 using MyApplication.Web.Models;
 using Microsoft.AspNet.Identity;
 
 namespace MyApplication.Web.Migrations
 {
-    /// <summary>TODO The configuration.</summary>
+    [ExcludeFromCodeCoverage]
+
     internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
-        /// <summary>Initializes a new instance of the <see cref="Configuration"/> class.</summary>
         public Configuration()
         {
             this.AutomaticMigrationsEnabled = true;
         }
 
-        /// <summary>TODO The seed.</summary>
-        /// <param name="context">TODO The context.</param>
         protected override void Seed(ApplicationDbContext context)
         {
             var passwordHash = new PasswordHasher();

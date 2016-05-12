@@ -1,11 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IdentityBasicAuthenticationAttribute.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The identity basic authentication attribute.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 
 namespace MyApplication.Web.Filters
 {
@@ -16,15 +9,10 @@ namespace MyApplication.Web.Filters
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Models;
+    [ExcludeFromCodeCoverage]
 
-    /// <summary>TODO The identity basic authentication attribute.</summary>
     public class IdentityBasicAuthenticationAttribute : BasicAuthenticationAttribute
     {
-        /// <summary>TODO The authenticate async.</summary>
-        /// <param name="userName">TODO The user name.</param>
-        /// <param name="password">TODO The password.</param>
-        /// <param name="cancellationToken">TODO The cancellation token.</param>
-        /// <returns>The <see cref="Task"/>.</returns>
         protected override async Task<IPrincipal> AuthenticateAsync(string userName, string password, CancellationToken cancellationToken)
         {
             UserManager<ApplicationUser> userManager = CreateUserManager();
@@ -44,8 +32,6 @@ namespace MyApplication.Web.Filters
             return new ClaimsPrincipal(identity);
         }
 
-        /// <summary>TODO The create user manager.</summary>
-        /// <returns>The <see cref="UserManager"/>.</returns>
         private static UserManager<ApplicationUser> CreateUserManager()
         {
             return new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));

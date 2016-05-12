@@ -1,24 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BundleConfig.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The bundle config.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Web.Optimization;
 
 namespace MyApplication.Web
 {
-    /// <summary>TODO The bundle config.</summary>
+    [ExcludeFromCodeCoverage]
     public class BundleConfig
     {
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
-        /// <summary>TODO The register bundles.</summary>
-        /// <param name="bundles">TODO The bundles.</param>
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(

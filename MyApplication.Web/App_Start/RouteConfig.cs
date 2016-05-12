@@ -1,24 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RouteConfig.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   TODO The route config.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace MyApplication.Web
 {
-    /// <summary>TODO The route config.</summary>
+    [ExcludeFromCodeCoverage]
     public class RouteConfig
     {
-        /// <summary>TODO The register routes.</summary>
-        /// <param name="routes">TODO The routes.</param>
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
@@ -26,7 +14,7 @@ namespace MyApplication.Web
             routes.MapRoute(
                 name: "Default", 
                 url: "{controller}/{action}", 
-                defaults: new { controller = "Home", action = "About" }
+                defaults: new { controller = "Some", action = "Index" }
             );
         }
     }
