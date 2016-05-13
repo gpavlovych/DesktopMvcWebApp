@@ -45,7 +45,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<LoginViewModel>().Create();
             signInManagerMock.Setup(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false))
-                .Returns(Task.FromResult(SignInStatus.Success));
+                .ReturnsAsync(SignInStatus.Success);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -68,7 +68,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<LoginViewModel>().Create();
             signInManagerMock.Setup(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false))
-                .Returns(Task.FromResult(SignInStatus.Success));
+                .ReturnsAsync(SignInStatus.Success);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -92,7 +92,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<LoginViewModel>().Create();
             signInManagerMock.Setup(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false))
-                .Returns(Task.FromResult(SignInStatus.LockedOut));
+                .ReturnsAsync(SignInStatus.LockedOut);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -115,7 +115,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<LoginViewModel>().Create();
             signInManagerMock.Setup(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false))
-                .Returns(Task.FromResult(SignInStatus.RequiresVerification));
+                .ReturnsAsync(SignInStatus.RequiresVerification);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -140,7 +140,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<LoginViewModel>().Create();
             signInManagerMock.Setup(it => it.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false))
-                .Returns(Task.FromResult(SignInStatus.Failure));
+                .ReturnsAsync(SignInStatus.Failure);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -192,7 +192,7 @@ namespace MyApplication.Web.Controllers.Tests
             // arrange
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            signInManagerMock.Setup(it => it.HasBeenVerifiedAsync()).Returns(Task.FromResult(true));
+            signInManagerMock.Setup(it => it.HasBeenVerifiedAsync()).ReturnsAsync(true);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -216,7 +216,7 @@ namespace MyApplication.Web.Controllers.Tests
             // arrange
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            signInManagerMock.Setup(it => it.HasBeenVerifiedAsync()).Returns(Task.FromResult(false));
+            signInManagerMock.Setup(it => it.HasBeenVerifiedAsync()).ReturnsAsync(false);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -242,7 +242,7 @@ namespace MyApplication.Web.Controllers.Tests
             var model = fixture.Build<VerifyCodeViewModel>().With(it => it.ReturnUrl, fixture.Create<string>("/localurl")).Create();
             signInManagerMock.Setup(
                 it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser))
-                .Returns(Task.FromResult(SignInStatus.Success));
+                .ReturnsAsync(SignInStatus.Success);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -263,7 +263,7 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<VerifyCodeViewModel>().With(it => it.ReturnUrl, fixture.Create<string>("http://localurl")).Create();
-            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).Returns(Task.FromResult(SignInStatus.Success));
+            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).ReturnsAsync(SignInStatus.Success);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -284,7 +284,7 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<VerifyCodeViewModel>().Create();
-            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).Returns(Task.FromResult(SignInStatus.LockedOut));
+            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).ReturnsAsync(SignInStatus.LockedOut);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -304,7 +304,7 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<VerifyCodeViewModel>().Create();
-            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).Returns(Task.FromResult(SignInStatus.Failure));
+            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).ReturnsAsync(SignInStatus.Failure);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -327,7 +327,7 @@ namespace MyApplication.Web.Controllers.Tests
             var fixture = new ControllerAutoFixture();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<VerifyCodeViewModel>().Create();
-            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).Returns(Task.FromResult(SignInStatus.Failure));
+            signInManagerMock.Setup(it => it.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser)).ReturnsAsync(SignInStatus.Failure);
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
             target.ModelState.Clear();
@@ -370,7 +370,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<RegisterViewModel>().Create();
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
-            userManagerMock.Setup(it => it.CreateAsync(It.IsAny<ApplicationUser>(), model.Password)).Returns(Task.FromResult(IdentityResult.Success));
+            userManagerMock.Setup(it => it.CreateAsync(It.IsAny<ApplicationUser>(), model.Password)).ReturnsAsync(IdentityResult.Success);
 
             signInManagerMock.Setup(it => it.SignInAsync(It.IsAny<ApplicationUser>(), false, false))
                 .Returns(Task.Run(() => { }));
@@ -396,7 +396,7 @@ namespace MyApplication.Web.Controllers.Tests
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             var model = fixture.Build<RegisterViewModel>().Create();
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
-            userManagerMock.Setup(it => it.CreateAsync(It.IsAny<ApplicationUser>(), model.Password)).Returns(Task.FromResult(IdentityResult.Failed("Invalid")));
+            userManagerMock.Setup(it => it.CreateAsync(It.IsAny<ApplicationUser>(), model.Password)).ReturnsAsync(IdentityResult.Failed("Invalid"));
 
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
@@ -422,7 +422,7 @@ namespace MyApplication.Web.Controllers.Tests
             var model = fixture.Build<RegisterViewModel>().Create();
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-            userManagerMock.Setup(it => it.CreateAsync(user, model.Password)).Returns(Task.FromResult(IdentityResult.Failed("Invalid")));
+            userManagerMock.Setup(it => it.CreateAsync(user, model.Password)).ReturnsAsync(IdentityResult.Failed("Invalid"));
 
             var target = fixture.Create<AccountController>();
             target.Url = fixture.Create<UrlHelper>();
@@ -454,7 +454,7 @@ namespace MyApplication.Web.Controllers.Tests
             var userId = fixture.Create<string>();
             var code = fixture.Create<string>();
             userManagerMock.Setup(it => it.ConfirmEmailAsync(userId, code))
-                .Returns(Task.FromResult(IdentityResult.Success));
+                .ReturnsAsync(IdentityResult.Success);
 
             // act
             var result = await target.ConfirmEmail(userId, code) as ViewResult;
@@ -475,7 +475,7 @@ namespace MyApplication.Web.Controllers.Tests
             var userId = fixture.Create<string>();
             var code = fixture.Create<string>();
             userManagerMock.Setup(it => it.ConfirmEmailAsync(userId, code))
-                .Returns(Task.FromResult(IdentityResult.Failed(fixture.Create<string>())));
+                .ReturnsAsync(IdentityResult.Failed(fixture.Create<string>()));
 
             // act
             var result = await target.ConfirmEmail(userId, code) as ViewResult;
@@ -547,8 +547,8 @@ namespace MyApplication.Web.Controllers.Tests
                 fixture.Build<ApplicationUser>().Create();
             var viewModel = fixture.Build<ForgotPasswordViewModel>().Create();
             var target = fixture.Create<AccountController>();
-            userManagerMock.Setup(it => it.FindByNameAsync(viewModel.Email)).Returns(Task.FromResult(user));
-            userManagerMock.Setup(it => it.IsEmailConfirmedAsync(user.Id)).Returns(Task.FromResult(false));
+            userManagerMock.Setup(it => it.FindByNameAsync(viewModel.Email)).ReturnsAsync(user);
+            userManagerMock.Setup(it => it.IsEmailConfirmedAsync(user.Id)).ReturnsAsync(false);
 
             // act
             var result = await target.ForgotPassword(viewModel) as ViewResult;
@@ -568,8 +568,8 @@ namespace MyApplication.Web.Controllers.Tests
                 fixture.Build<ApplicationUser>().Create();
             var viewModel = fixture.Build<ForgotPasswordViewModel>().Create();
             var target = fixture.Create<AccountController>();
-            userManagerMock.Setup(it => it.FindByNameAsync(viewModel.Email)).Returns(Task.FromResult(user));
-            userManagerMock.Setup(it => it.IsEmailConfirmedAsync(user.Id)).Returns(Task.FromResult(true));
+            userManagerMock.Setup(it => it.FindByNameAsync(viewModel.Email)).ReturnsAsync(user);
+            userManagerMock.Setup(it => it.IsEmailConfirmedAsync(user.Id)).ReturnsAsync(true);
 
             // act
             var result = await target.ForgotPassword(viewModel) as ViewResult;
@@ -588,7 +588,7 @@ namespace MyApplication.Web.Controllers.Tests
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var viewModel = fixture.Build<ForgotPasswordViewModel>().Create();
             var target = fixture.Create<AccountController>();
-            userManagerMock.Setup(it => it.FindByNameAsync(viewModel.Email)).Returns(Task.FromResult((ApplicationUser)null));
+            userManagerMock.Setup(it => it.FindByNameAsync(viewModel.Email)).ReturnsAsync(null);
          
             // act
             var result = await target.ForgotPassword(viewModel) as ViewResult;
@@ -679,8 +679,8 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             var user =
                  fixture.Build<ApplicationUser>().Create();
-            userManagerMock.Setup(it => it.FindByNameAsync(model.Email)).Returns(Task.FromResult(user));
-            userManagerMock.Setup(it => it.ResetPasswordAsync(user.Id, model.Code, model.Password)).Returns(Task.FromResult(IdentityResult.Success));
+            userManagerMock.Setup(it => it.FindByNameAsync(model.Email)).ReturnsAsync(user);
+            userManagerMock.Setup(it => it.ResetPasswordAsync(user.Id, model.Code, model.Password)).ReturnsAsync(IdentityResult.Success);
 
             // act
             var result = await target.ResetPassword(model) as RedirectToRouteResult;
@@ -702,8 +702,8 @@ namespace MyApplication.Web.Controllers.Tests
             var target = fixture.Create<AccountController>();
             var user =
                  fixture.Build<ApplicationUser>().Create();
-            userManagerMock.Setup(it => it.FindByNameAsync(model.Email)).Returns(Task.FromResult(user));
-            userManagerMock.Setup(it => it.ResetPasswordAsync(user.Id, model.Code, model.Password)).Returns(Task.FromResult(IdentityResult.Failed()));
+            userManagerMock.Setup(it => it.FindByNameAsync(model.Email)).ReturnsAsync(user);
+            userManagerMock.Setup(it => it.ResetPasswordAsync(user.Id, model.Code, model.Password)).ReturnsAsync(IdentityResult.Failed());
 
             // act
             var result = await target.ResetPassword(model) as ViewResult;
@@ -722,7 +722,7 @@ namespace MyApplication.Web.Controllers.Tests
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var model = fixture.Build<ResetPasswordViewModel>().Create();
             var target = fixture.Create<AccountController>();
-            userManagerMock.Setup(it => it.FindByNameAsync(model.Email)).Returns(Task.FromResult((ApplicationUser)null));
+            userManagerMock.Setup(it => it.FindByNameAsync(model.Email)).ReturnsAsync(null);
 
             // act
             var result = await target.ResetPassword(model) as RedirectToRouteResult;
@@ -802,7 +802,7 @@ namespace MyApplication.Web.Controllers.Tests
             var rememberMe = fixture.Create<bool>();
             var returnUrl = fixture.Create<string>();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            signInManagerMock.Setup(it => it.GetVerifiedUserIdAsync()).Returns(Task.FromResult<string>(null));
+            signInManagerMock.Setup(it => it.GetVerifiedUserIdAsync()).ReturnsAsync(null);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -822,10 +822,10 @@ namespace MyApplication.Web.Controllers.Tests
             var returnUrl = fixture.Create<string>();
             var userId = fixture.Create<string>();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            signInManagerMock.Setup(it => it.GetVerifiedUserIdAsync()).Returns(Task.FromResult(userId));
+            signInManagerMock.Setup(it => it.GetVerifiedUserIdAsync()).ReturnsAsync(userId);
             var userFactorsMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var providers = fixture.CreateMany<string>().ToList() as IList<string>;
-            userFactorsMock.Setup(it => it.GetValidTwoFactorProvidersAsync(userId)).Returns(Task.FromResult(providers));
+            userFactorsMock.Setup(it => it.GetValidTwoFactorProvidersAsync(userId)).ReturnsAsync(providers);
             var factorOptions = providers.Select(
                  purpose => new SelectListItem
                  {
@@ -874,7 +874,7 @@ namespace MyApplication.Web.Controllers.Tests
             var model = fixture.Build<SendCodeViewModel>().Create();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             signInManagerMock.Setup(it => it.SendTwoFactorCodeAsync(model.SelectedProvider))
-                             .Returns(Task.FromResult(false));
+                             .ReturnsAsync(false);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -893,7 +893,7 @@ namespace MyApplication.Web.Controllers.Tests
             var model = fixture.Build<SendCodeViewModel>().Create();
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             signInManagerMock.Setup(it => it.SendTwoFactorCodeAsync(model.SelectedProvider))
-                             .Returns(Task.FromResult(true));
+                             .ReturnsAsync(true);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -919,7 +919,7 @@ namespace MyApplication.Web.Controllers.Tests
             var returnUrl = fixture.Create<string>();
             ExternalLoginInfo loginInfo = null;
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(loginInfo);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -942,10 +942,10 @@ namespace MyApplication.Web.Controllers.Tests
                     .Without(it => it.Login)
                     .Create();
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(loginInfo);
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
-                             .Returns(Task.FromResult(SignInStatus.Success));
+                             .ReturnsAsync(SignInStatus.Success);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -968,10 +968,10 @@ namespace MyApplication.Web.Controllers.Tests
                    .Without(it => it.Login)
                    .Create();
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(loginInfo);
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
-                             .Returns(Task.FromResult(SignInStatus.LockedOut));
+                             .ReturnsAsync(SignInStatus.LockedOut);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -994,10 +994,10 @@ namespace MyApplication.Web.Controllers.Tests
                     .Without(it => it.Login)
                     .Create();
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(loginInfo);
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
-                             .Returns(Task.FromResult(SignInStatus.RequiresVerification));
+                             .ReturnsAsync(SignInStatus.RequiresVerification);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -1021,10 +1021,10 @@ namespace MyApplication.Web.Controllers.Tests
                     .Without(it => it.ExternalIdentity)
                     .Create();
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(loginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(loginInfo);
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
             signInManagerMock.Setup(it => it.ExternalSignInAsync(loginInfo, false))
-                             .Returns(Task.FromResult(SignInStatus.Failure));
+                             .ReturnsAsync(SignInStatus.Failure);
             var target = fixture.Create<AccountController>();
 
             // act
@@ -1076,7 +1076,7 @@ namespace MyApplication.Web.Controllers.Tests
             fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(false);
 
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(externalLoginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(externalLoginInfo);
 
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var userId = fixture.Create<string>();
@@ -1123,7 +1123,7 @@ namespace MyApplication.Web.Controllers.Tests
             fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(false);
 
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(externalLoginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(externalLoginInfo);
 
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var userId = fixture.Create<string>();
@@ -1143,7 +1143,7 @@ namespace MyApplication.Web.Controllers.Tests
             userManagerMock.Setup(
                 it =>
                 it.AddLoginAsync(userId, externalLoginInfo.Login))
-                           .Returns(Task.FromResult(IdentityResult.Failed(error)));
+                           .ReturnsAsync(IdentityResult.Failed(error));
 
             var target = fixture.Create<AccountController>();
 
@@ -1173,7 +1173,7 @@ namespace MyApplication.Web.Controllers.Tests
             fixture.IdentityMock.SetupGet(it => it.IsAuthenticated).Returns(false);
 
             var userServiceMock = fixture.Freeze<Mock<IUserService>>();
-            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).Returns(Task.FromResult(externalLoginInfo));
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(externalLoginInfo);
 
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
             var userId = fixture.Create<string>();
@@ -1192,11 +1192,10 @@ namespace MyApplication.Web.Controllers.Tests
             userManagerMock.Setup(
                 it =>
                 it.AddLoginAsync(userId, externalLoginInfo.Login))
-                           .Returns(Task.FromResult(IdentityResult.Success));
+                           .ReturnsAsync(IdentityResult.Success);
 
             var signInManagerMock = fixture.Freeze<Mock<IApplicationSignInManager>>();
-            signInManagerMock.Setup(it => it.SignInAsync(It.Is<ApplicationUser>(user=>user==createdUser), false, false)).Returns(
-                Task.FromResult(default(object)));
+            //signInManagerMock.Setup(it => it.SignInAsync(It.Is<ApplicationUser>(user=>user==createdUser), false, false)).Returns(default(object));
                 var target = fixture.Create<AccountController>();
 
             // act
