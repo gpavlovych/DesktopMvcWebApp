@@ -153,6 +153,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="Controllers\ControllerAutoFixture.cs" />
+    <Compile Include="Controllers\ManageControllerTests.cs" />
     <Compile Include="Controllers\SomeApiControllerTests.cs" />
     <Compile Include="Controllers\SomeControllerTests.cs" />
     <Compile Include="Controllers\WebApiControllerAutoFixture.cs" />

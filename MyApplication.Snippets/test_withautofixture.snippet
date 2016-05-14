@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets  xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Controller test</Title>
+			<Shortcut>controllertest</Shortcut>
+			<Description>Code snippet for controller test</Description>
+			<Author>George Pavlovych</Author>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>controller</ID>
+					<ToolTip>Controller class</ToolTip>
+					<Default>MyController</Default>
+				</Literal>
+				<Literal>
+					<ID>action</ID>
+					<ToolTip>Action method</ToolTip>
+					<Default>Index</Default>
+				</Literal>
+				<Literal>
+					<ID>actionResult</ID>
+					<ToolTip>Action result</ToolTip>
+					<Default>ViewResult</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[// arrange
+				var fixture = new ControllerAutoFixture();
+				var target = fixture.Create<$controller$>();
+
+				// act
+				var result = target.$action$() as $actionResult$;
+				
+				// assert
+				result.Should().NotBeNull();
+				result.ViewName.Should().BeNullOrEmpty();
+				result.ViewData.Should().BeEmpty();]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Controller test asynchronous</Title>
+			<Shortcut>controllertest</Shortcut>
+			<Description>Code snippet for controller test</Description>
+			<Author>George Pavlovych</Author>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>controller</ID>
+					<ToolTip>Controller class</ToolTip>
+					<Default>MyController</Default>
+				</Literal>
+				<Literal>
+					<ID>action</ID>
+					<ToolTip>Action method</ToolTip>
+					<Default>Index</Default>
+				</Literal>
+				<Literal>
+					<ID>actionResult</ID>
+					<ToolTip>Action result</ToolTip>
+					<Default>ViewResult</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[#region $action$
+
+				[TestMethod]
+				public async Task $action$Test()
+				{
+					// arrange
+					var fixture = new ControllerAutoFixture();
+					var target = fixture.Create<$controller$>();
+
+					// act
+					var result = await target.$action$() as $actionResult$;
+				
+					// assert
+					result.Should().NotBeNull();
+					result.ViewName.Should().BeNullOrEmpty();
+					result.ViewData.Should().BeEmpty();
+				}
+
+				#endregion $action$]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Fixture create</Title>
+			<Shortcut>fixturecreate</Shortcut>
+			<Description>Code snippet for create by Ploeh Autofixture</Description>
+			<Author>George Pavlovych</Author>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>fixture</ID>
+					<ToolTip>Fixture instance</ToolTip>
+					<Default>fixture</Default>
+				</Literal>
+				<Literal>
+					<ID>model</ID>
+					<ToolTip>Create result</ToolTip>
+					<Default>MyModel</Default>
+				</Literal>
+				<Literal>
+					<ID>var</ID>
+					<ToolTip>Create result</ToolTip>
+					<Default>myVar</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[var $var$ = $fixture$.Create<$model$>();]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Fixture build</Title>
+			<Shortcut>fixturebuild</Shortcut>
+			<Description>Code snippet for build by Ploeh Autofixture</Description>
+			<Author>George Pavlovych</Author>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>fixture</ID>
+					<ToolTip>Fixture instance</ToolTip>
+					<Default>fixture</Default>
+				</Literal>
+				<Literal>
+					<ID>model</ID>
+					<ToolTip>Create result</ToolTip>
+					<Default>MyModel</Default>
+				</Literal>
+				<Literal>
+					<ID>var</ID>
+					<ToolTip>Create result</ToolTip>
+					<Default>model</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[var $var$ = $fixture$.Build<$model$>().Create();]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Fixture freeze</Title>
+			<Shortcut>fixturefreeze</Shortcut>
+			<Description>Code snippet for fixture freeze by Ploeh Autofixture</Description>
+			<Author>George Pavlovych</Author>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>fixture</ID>
+					<ToolTip>Fixture instance</ToolTip>
+					<Default>fixture</Default>
+				</Literal>
+				<Literal>
+					<ID>model</ID>
+					<ToolTip>Create result</ToolTip>
+					<Default>MyModel</Default>
+				</Literal>
+				<Literal>
+					<ID>var</ID>
+					<ToolTip>Create result</ToolTip>
+					<Default>model</Default>
+				</Literal>
+				<Literal>
+					<ID>method</ID>
+					<ToolTip>Method</ToolTip>
+					<Default>MyMethod</Default>
+				</Literal>
+				<Literal>
+					<ID>something</ID>
+					<ToolTip>return value</ToolTip>
+					<Default>null</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[var $var$Mock = $fixture$.Freeze<Mock<$model$>>();
+				$var$Mock.Setup(it=>it.$method$()).Returns($something$);]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

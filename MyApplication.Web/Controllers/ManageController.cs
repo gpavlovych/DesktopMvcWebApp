@@ -13,11 +13,13 @@ namespace MyApplication.Web.Controllers
     {
         private IApplicationSignInManager _signInManager;
         private IApplicationUserManager _userManager;
+        private IAuthenticationManager _authenticationManager;
 
-        public ManageController(IApplicationUserManager userManager, IApplicationSignInManager signInManager)
+        public ManageController(IApplicationUserManager userManager, IApplicationSignInManager signInManager, IAuthenticationManager authenticationManager)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
+            this._authenticationManager = authenticationManager;
         }
 
         // GET: /Manage/Index
@@ -45,7 +47,7 @@ namespace MyApplication.Web.Controllers
                                 TwoFactor = await this._userManager.GetTwoFactorEnabledAsync(userId), 
                                 Logins = await this._userManager.GetLoginsAsync(userId), 
                                 BrowserRemembered =
-                                    await this.AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                                    await _authenticationManager.TwoFactorBrowserRememberedAsync(userId)
                             };
             return this.View(model);
         }
@@ -325,7 +327,7 @@ namespace MyApplication.Web.Controllers
 
             var userLogins = await this._userManager.GetLoginsAsync(this.User.Identity.GetUserId());
             var otherLogins =
-                this.AuthenticationManager.GetExternalAuthenticationTypes()
+                _authenticationManager.GetExternalAuthenticationTypes()
                     .Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider))
                     .ToList();
             this.ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
@@ -353,7 +355,7 @@ namespace MyApplication.Web.Controllers
         public async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo =
-                await this.AuthenticationManager.GetExternalLoginInfoAsync(XSRF_KEY, this.User.Identity.GetUserId());
+                await _authenticationManager.GetExternalLoginInfoAsync(XSRF_KEY, this.User.Identity.GetUserId());
             if (loginInfo == null)
             {
                 return this.RedirectToAction(
@@ -389,14 +391,6 @@ namespace MyApplication.Web.Controllers
 
         // Used for XSRF protection when adding external logins
         private const string XSRF_KEY = "XsrfId";
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return this.HttpContext.GetOwinContext().Authentication;
-            }
-        }
 
         private void AddErrors(IdentityResult result)
         {
