@@ -1,15 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainWindow.xaml.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   Interaction logic for MainWindow.xaml
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.Prism.Mvvm;
 
 namespace MyApplication.Desktop.Views

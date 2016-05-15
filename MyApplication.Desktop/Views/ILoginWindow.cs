@@ -1,12 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ILoginWindow.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The LoginWindow interface.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
 namespace MyApplication.Desktop.Views
 {
     /// <summary>The LoginWindow interface.</summary>

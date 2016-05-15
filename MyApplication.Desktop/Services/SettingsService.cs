@@ -1,13 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SettingsService.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The settings service.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using MyApplication.Desktop.Properties;
 
 namespace MyApplication.Desktop.Services

@@ -1,15 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="HttpClientWrapper.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The http client wrapper.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Http.Headers;

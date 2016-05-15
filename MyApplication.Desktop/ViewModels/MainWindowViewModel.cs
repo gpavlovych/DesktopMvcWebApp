@@ -1,14 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainWindowViewModel.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The main window view model.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
 using System;
 using System.Windows.Input;
 using Microsoft.Practices.Unity;

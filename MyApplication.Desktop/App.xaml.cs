@@ -1,15 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="App.xaml.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   Interaction logic for App.xaml
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Windows;
 using MyApplication.Desktop.Properties;

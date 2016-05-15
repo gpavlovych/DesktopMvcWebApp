@@ -1,14 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SearchService.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   A concrete implementation of sample service for calling web api.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
 using System.Threading.Tasks;
 
 namespace MyApplication.Desktop.Services

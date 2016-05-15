@@ -1,19 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SomeApiControllerTests.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   Some controller tests.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MyApplication.Web.Models;
@@ -23,9 +9,6 @@ using Ploeh.AutoFixture;
 
 namespace MyApplication.Web.Controllers.Tests
 {
-    /// <summary>
-    /// Tests for <see cref="SomeApiController"/>
-    /// </summary>
     [TestClass]
     public class SomeApiControllerTests
     {
