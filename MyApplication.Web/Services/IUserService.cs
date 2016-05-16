@@ -4,11 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 namespace MyApplication.Web.Services
 {
     public interface IUserService
     {
         Task<ExternalLoginInfo> GetExternalLoginInfoAsync();
+
+        IEnumerable<AuthenticationDescription> GetExternalAuthenticationTypes();
+        Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string xSRF_KEY, string v);
+
+        Task<bool> TwoFactorBrowserRememberedAsync(string userId);
     }
 }

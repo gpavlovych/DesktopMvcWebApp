@@ -9,15 +9,17 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using FluentAssertions;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Moq;
 using MyApplication.Web.Models;
+using MyApplication.Web.Services;
 using MyApplication.Web.Tests.Controllers;
 using Ploeh.AutoFixture;
 
 namespace MyApplication.Web.Controllers.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class ManageControllerTests
     {
         #region Index
@@ -27,7 +29,6 @@ namespace MyApplication.Web.Controllers.Tests
             //arrange
             var fixture = new ControllerAutoFixture();
             var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
-            var authenticationManagerMock = fixture.Freeze<Mock<IAuthenticationManager>>();
             var passwordHash = fixture.Create<string>();
             userManagerMock.Setup(it => it.FindByIdAsync(It.IsAny<string>()))
                            .ReturnsAsync(
@@ -36,8 +37,11 @@ namespace MyApplication.Web.Controllers.Tests
             userManagerMock.Setup(it => it.GetPhoneNumberAsync(It.IsAny<string>())).ReturnsAsync(expectedPhoneNumber);
             var expectedTwoFactor = fixture.Create<bool>();
             userManagerMock.Setup(it => it.GetTwoFactorEnabledAsync(It.IsAny<string>())).ReturnsAsync(expectedTwoFactor);
-            var expectedLogins = fixture.Create<List<UserLoginInfo>>();
+            var expectedLogins = fixture.CreateMany<UserLoginInfo>().ToList();
             userManagerMock.Setup(it => it.GetLoginsAsync(It.IsAny<string>())).ReturnsAsync(expectedLogins);
+            var expectedBrowserRemembered = fixture.Create<bool>();
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.TwoFactorBrowserRememberedAsync(It.IsAny<string>())).ReturnsAsync(expectedBrowserRemembered);
             var expectedStatusMessage = message == ManageController.ManageMessageId.ChangePasswordSuccess
                                             ? "Your password has been changed."
                                             : message == ManageController.ManageMessageId.SetPasswordSuccess
@@ -62,6 +66,7 @@ namespace MyApplication.Web.Controllers.Tests
                                         PhoneNumber = expectedPhoneNumber,
                                         TwoFactor = expectedTwoFactor,
                                         Logins = expectedLogins,
+                                        BrowserRemembered = expectedBrowserRemembered
                                     };
 
             // act
@@ -697,6 +702,9 @@ namespace MyApplication.Web.Controllers.Tests
             userManagerMock.Setup(it => it.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
             var expectedCurrentLogins = fixture.CreateMany<UserLoginInfo>().ToList();
             userManagerMock.Setup(it => it.GetLoginsAsync(It.IsAny<string>())).ReturnsAsync(expectedCurrentLogins);
+            var expectedOtherLogins = fixture.CreateMany<AuthenticationDescription>().ToList();
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalAuthenticationTypes()).Returns(expectedOtherLogins);
             var target = fixture.Create<ManageController>();
 
             // act
@@ -711,8 +719,11 @@ namespace MyApplication.Web.Controllers.Tests
             else
             {
                 result.ViewName.Should().BeNullOrEmpty();
-                result.Model.Should().BeOfType<ManageLoginsViewModel>();
-                (result.Model as ManageLoginsViewModel).CurrentLogins.ShouldBeEquivalentTo(expectedCurrentLogins);
+                result.Model.ShouldBeEquivalentTo(new ManageLoginsViewModel
+                {
+                    CurrentLogins = expectedCurrentLogins,
+                    OtherLogins = expectedOtherLogins
+                });
             }
             result.ViewData.Should().Contain("StatusMessage", expectedStatusMessage);
         }
@@ -740,7 +751,6 @@ namespace MyApplication.Web.Controllers.Tests
         }
         #endregion ManageLogins
 
-
         #region LinkLogin
 
         [TestMethod]
@@ -762,11 +772,22 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region LinkLoginCallback
 
-        [TestMethod]
-        public async Task LinkLoginCallbackTest()
+        private async Task LinkLoginCallbackTest(
+            Func<ControllerAutoFixture, ExternalLoginInfo> getExternalLoginInfo,
+            Func<ControllerAutoFixture, IdentityResult> getResult)
         {
             // arrange
             var fixture = new ControllerAutoFixture();
+            var externalLoginInfo = getExternalLoginInfo(fixture);
+            var identityResult = getResult(fixture);
+            var userServiceMock = fixture.Freeze<Mock<IUserService>>();
+            userServiceMock.Setup(it => it.GetExternalLoginInfoAsync()).ReturnsAsync(externalLoginInfo);
+            var userManagerMock = fixture.Freeze<Mock<IApplicationUserManager>>();
+            if (externalLoginInfo != null)
+            {
+                userManagerMock.Setup(it => it.AddLoginAsync(It.IsAny<string>(), externalLoginInfo.Login))
+                               .ReturnsAsync(identityResult);
+            }
             var target = fixture.Create<ManageController>();
 
             // act
@@ -775,6 +796,34 @@ namespace MyApplication.Web.Controllers.Tests
             // assert
             result.Should().NotBeNull();
             result.RouteValues.Should().Contain("action", "ManageLogins");
+            if (externalLoginInfo == null || !identityResult.Succeeded)
+            {
+                result.RouteValues.Should().Contain("Message", ManageController.ManageMessageId.Error);
+            }
+        }
+
+        [TestMethod]
+        public async Task LinkLoginCallbackTest()
+        {
+            await this.LinkLoginCallbackTest(
+                fixture => fixture.Build<ExternalLoginInfo>().Without(it=>it.ExternalIdentity).Create(),
+                fixture => IdentityResult.Success);
+        }
+
+        [TestMethod]
+        public async Task LinkLoginCallbackTestFailed()
+        {
+            await this.LinkLoginCallbackTest(
+                fixture => fixture.Build<ExternalLoginInfo>().Without(it => it.ExternalIdentity).Create(),
+                fixture => IdentityResult.Failed(fixture.Create<string>()));
+        }
+
+        [TestMethod]
+        public async Task LinkLoginCallbackTestLoginInfoNull()
+        {
+            await this.LinkLoginCallbackTest(
+                fixture => null,
+                fixture => IdentityResult.Success);
         }
 
         #endregion LinkLoginCallback

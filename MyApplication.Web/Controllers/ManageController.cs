@@ -4,22 +4,22 @@ using System.Web;
 using System.Web.Mvc;
 using MyApplication.Web.Models;
 using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
+using MyApplication.Web.Services;
 
 namespace MyApplication.Web.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        private IApplicationSignInManager _signInManager;
-        private IApplicationUserManager _userManager;
-        private IAuthenticationManager _authenticationManager;
+        private readonly IApplicationSignInManager _signInManager;
+        private readonly IApplicationUserManager _userManager;
+        private readonly IUserService _userService;
 
-        public ManageController(IApplicationUserManager userManager, IApplicationSignInManager signInManager, IAuthenticationManager authenticationManager)
+        public ManageController(IApplicationUserManager userManager, IApplicationSignInManager signInManager, IUserService userService)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
-            this._authenticationManager = authenticationManager;
+            this._userService = userService;
         }
 
         // GET: /Manage/Index
@@ -47,7 +47,7 @@ namespace MyApplication.Web.Controllers
                                 TwoFactor = await this._userManager.GetTwoFactorEnabledAsync(userId), 
                                 Logins = await this._userManager.GetLoginsAsync(userId), 
                                 BrowserRemembered =
-                                    await _authenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                                    await _userService.TwoFactorBrowserRememberedAsync(userId)
                             };
             return this.View(model);
         }
@@ -327,7 +327,7 @@ namespace MyApplication.Web.Controllers
 
             var userLogins = await this._userManager.GetLoginsAsync(this.User.Identity.GetUserId());
             var otherLogins =
-                _authenticationManager.GetExternalAuthenticationTypes()
+                _userService.GetExternalAuthenticationTypes()
                     .Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider))
                     .ToList();
             this.ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
@@ -355,7 +355,7 @@ namespace MyApplication.Web.Controllers
         public async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo =
-                await _authenticationManager.GetExternalLoginInfoAsync(XSRF_KEY, this.User.Identity.GetUserId());
+                await _userService.GetExternalLoginInfoAsync(XSRF_KEY, this.User.Identity.GetUserId());
             if (loginInfo == null)
             {
                 return this.RedirectToAction(
