@@ -27,9 +27,9 @@ namespace MyApplication.Web.Services
             return this._authenticationManager.GetExternalAuthenticationTypes();
         }
 
-        public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string xSRF_KEY, string v)
+        public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string xsrfKey, string userId)
         {
-            return await this._authenticationManager.GetExternalLoginInfoAsync(xSRF_KEY, v);
+            return await this._authenticationManager.GetExternalLoginInfoAsync(xsrfKey, userId);
         }
 
         public async Task<bool> TwoFactorBrowserRememberedAsync(string userId)

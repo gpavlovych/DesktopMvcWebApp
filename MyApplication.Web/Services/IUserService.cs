@@ -13,7 +13,8 @@ namespace MyApplication.Web.Services
         Task<ExternalLoginInfo> GetExternalLoginInfoAsync();
 
         IEnumerable<AuthenticationDescription> GetExternalAuthenticationTypes();
-        Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string xSRF_KEY, string v);
+
+        Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string xSrfKey, string userId);
 
         Task<bool> TwoFactorBrowserRememberedAsync(string userId);
     }
