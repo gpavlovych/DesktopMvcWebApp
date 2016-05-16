@@ -2,12 +2,13 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MyApplication.Web.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using MyApplication.Web.Models;
+using MyApplication.Web.Controllers;
 using Ploeh.AutoFixture;
 
-namespace MyApplication.Web.Controllers.Tests
+namespace MyApplication.Web.Tests.Controllers
 {
     [TestClass]
     public class SomeApiControllerTests

@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using FluentAssertions;
 using MyApplication.Web.Models;
-using MyApplication.Web.Tests.Controllers;
+using MyApplication.Web.Controllers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MyApplication.Web.Services;
 using Ploeh.AutoFixture;
 
-namespace MyApplication.Web.Controllers.Tests
+namespace MyApplication.Web.Tests.Controllers
 {
     [TestClass]
     public class AccountControllerTests

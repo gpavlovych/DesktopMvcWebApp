@@ -1,23 +1,19 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MyApplication.Web.Controllers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using FluentAssertions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using MyApplication.Web.Controllers;
 using MyApplication.Web.Models;
 using MyApplication.Web.Services;
-using MyApplication.Web.Tests.Controllers;
 using Ploeh.AutoFixture;
 
-namespace MyApplication.Web.Controllers.Tests
+namespace MyApplication.Web.Tests.Controllers
 {
     [TestClass]
     public class ManageControllerTests
@@ -75,12 +71,7 @@ namespace MyApplication.Web.Controllers.Tests
             // assert
             result.Should().NotBeNull();
             result.ViewData.Should().Contain("StatusMessage", expectedStatusMessage);
-            var model = result.Model as IndexViewModel;
-            model.Should().NotBeNull();
-            model.HasPassword.Should().Be(passwordHash != null);
-            model.PhoneNumber.Should().Be(expectedPhoneNumber);
-            model.TwoFactor.Should().Be(expectedTwoFactor);
-            model.Logins.Should().BeSameAs(expectedLogins);
+            result.Model.ShouldBeEquivalentTo(expectedModel);
         }
 
         [TestMethod]
@@ -154,7 +145,7 @@ namespace MyApplication.Web.Controllers.Tests
             result.RouteValues.Should().Contain("action", "ManageLogins");
             if (expectedRemoveLoginResult.Succeeded)
             {
-                if (user != null)
+                if (expectedUser != null)
                 {
                     signInManagerMock.Verify(it => it.SignInAsync(expectedUser, false, false));
                 }
@@ -167,15 +158,15 @@ namespace MyApplication.Web.Controllers.Tests
         }
 
         [TestMethod]
-        public void RemoveLoginTestSuccess()
+        public async Task RemoveLoginTestSuccess()
         {
-            RemoveLoginTest(fixture => IdentityResult.Success, fixture => fixture.Create<ApplicationUser>());
+            await RemoveLoginTest(fixture => IdentityResult.Success, fixture => fixture.Create<ApplicationUser>());
         }
 
         [TestMethod]
-        public void RemoveLoginTestFailed()
+        public async Task RemoveLoginTestFailed()
         {
-            RemoveLoginTest(
+            await RemoveLoginTest(
                 fixture => IdentityResult.Failed(fixture.Create<string>()),
                 fixture => fixture.Create<ApplicationUser>());
         }
@@ -289,7 +280,7 @@ namespace MyApplication.Web.Controllers.Tests
 
         #region DisableTwoFactorAuthentication
 
-        [TestMethod()]
+        [TestMethod]
         public async Task DisableTwoFactorAuthenticationTest()
         {
             // arrange
@@ -357,7 +348,7 @@ namespace MyApplication.Web.Controllers.Tests
 
         #endregion VerifyPhoneNumber
 
-        #region VerifyPhoneNumber Post
+        #region VerifyPhoneNumberPost
 
         private async Task VerifyPhoneNumberPostTest(
             bool isModelValid,
@@ -435,7 +426,7 @@ namespace MyApplication.Web.Controllers.Tests
             await VerifyPhoneNumberPostTest(true, fixture => IdentityResult.Failed(fixture.Create<string>()));
         }
 
-        #endregion VerifyPhoneNumber Post
+        #endregion VerifyPhoneNumberPost
 
         #region RemovePhoneNumber
 
@@ -502,7 +493,7 @@ namespace MyApplication.Web.Controllers.Tests
 
         #endregion ChangePassword
 
-        #region ChangePassword Post
+        #region ChangePasswordPost
 
         private async Task ChangePasswordPostTest(
             bool isModelValid,
@@ -581,7 +572,7 @@ namespace MyApplication.Web.Controllers.Tests
             await ChangePasswordPostTest(true, fixture => IdentityResult.Failed(fixture.Create<string>()));
         }
 
-        #endregion ChangePassword Post
+        #endregion ChangePasswordPost
 
         #region SetPassword
 
@@ -603,7 +594,7 @@ namespace MyApplication.Web.Controllers.Tests
 
         #endregion SetPassword
 
-        #region SetPassword Post
+        #region SetPasswordPost
 
         private async Task SetPasswordPostTest(
             bool isModelValid,
@@ -682,7 +673,7 @@ namespace MyApplication.Web.Controllers.Tests
             await SetPasswordPostTest(true, fixture => IdentityResult.Failed(fixture.Create<string>()));
         }
 
-        #endregion SetPassword Post
+        #endregion SetPasswordPost
 
         #region ManageLogins
 

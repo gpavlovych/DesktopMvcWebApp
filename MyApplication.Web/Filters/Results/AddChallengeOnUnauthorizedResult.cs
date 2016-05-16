@@ -1,15 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+
 
 namespace MyApplication.Web.Filters.Results
 {
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Web.Http;
-
+    [ExcludeFromCodeCoverage]
     public class AddChallengeOnUnauthorizedResult : IHttpActionResult
     {
         public AddChallengeOnUnauthorizedResult(AuthenticationHeaderValue challenge, IHttpActionResult innerResult)
@@ -22,7 +23,6 @@ namespace MyApplication.Web.Filters.Results
 
         public IHttpActionResult InnerResult { get; }
 
-        [ExcludeFromCodeCoverage]
         public async Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
         {
             HttpResponseMessage response = await this.InnerResult.ExecuteAsync(cancellationToken);

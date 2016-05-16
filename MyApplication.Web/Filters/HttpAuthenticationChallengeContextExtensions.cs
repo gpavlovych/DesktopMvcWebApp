@@ -1,13 +1,12 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
+using System.Web.Http.Filters;
+using MyApplication.Web.Filters.Results;
 
 namespace MyApplication.Web.Filters
 {
-    using System;
-    using System.Net.Http.Headers;
-    using System.Web.Http.Filters;
-    using Results;
     [ExcludeFromCodeCoverage]
-
     public static class HttpAuthenticationChallengeContextExtensions
     {
         public static void ChallengeWith(this HttpAuthenticationChallengeContext context, string scheme)

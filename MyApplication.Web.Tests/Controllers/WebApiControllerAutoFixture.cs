@@ -1,13 +1,10 @@
 using System;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Hosting;
-using MyApplication.Web.Tests;
 using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Kernel;
 
-namespace MyApplication.Web.Controllers.Tests
+namespace MyApplication.Web.Tests.Controllers
 {
     public class WebApiControllerAutoFixture : TestAutoFixture
     {
@@ -46,30 +43,7 @@ namespace MyApplication.Web.Controllers.Tests
             }
         }
 
-        private class ApiControllerConventions : CompositeCustomization
-        {
-            internal ApiControllerConventions()
-                : base(
-                    new HttpRequestMessageCustomization(), 
-                    new ApiControllerCustomization(), 
-                    new AutoMoqCustomization())
-            {
-            }
-        }
-
-        private class HttpRequestMessageCustomization : ICustomization
-        {
-            public void Customize(IFixture fixture)
-            {
-                fixture.Customize<HttpRequestMessage>(
-                    c =>
-                    c.Without(x => x.Content)
-                        .Do(x => x.Properties[HttpPropertyKeys.HttpConfigurationKey] = new HttpConfiguration()));
-            }
-        }
-
         public WebApiControllerAutoFixture()
-            : base()
         {
             this.Customize(new ApiControllerCustomization());
         }

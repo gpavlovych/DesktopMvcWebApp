@@ -1,16 +1,16 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Principal;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http.Filters;
+using MyApplication.Web.Filters.Results;
 
 namespace MyApplication.Web.Filters
 {
-    using System;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Security.Principal;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Web.Http.Filters;
-    using Results;
     [ExcludeFromCodeCoverage]
 
     public abstract class BasicAuthenticationAttribute : Attribute, IAuthenticationFilter

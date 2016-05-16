@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Diagnostics.CodeAnalysis;
 using MyApplication.Web.Models;
@@ -8,7 +6,6 @@ using Microsoft.AspNet.Identity;
 namespace MyApplication.Web.Migrations
 {
     [ExcludeFromCodeCoverage]
-
     internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
         public Configuration()

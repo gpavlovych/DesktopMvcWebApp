@@ -1,16 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using MyApplication.Web.Models;
 
 namespace MyApplication.Web.Filters
 {
-    using System.Security.Claims;
-    using System.Security.Principal;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.EntityFramework;
-    using Models;
     [ExcludeFromCodeCoverage]
-
     public class IdentityBasicAuthenticationAttribute : BasicAuthenticationAttribute
     {
         protected override async Task<IPrincipal> AuthenticateAsync(string userName, string password, CancellationToken cancellationToken)

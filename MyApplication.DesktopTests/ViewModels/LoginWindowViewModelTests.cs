@@ -1,15 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
-
+﻿using FluentAssertions;
 using MyApplication.Desktop.Services;
-using MyApplication.Desktop.Tests;
+using MyApplication.Desktop.ViewModels;
 using MyApplication.Desktop.Views;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-
 using Ploeh.AutoFixture;
 
-namespace MyApplication.Desktop.ViewModels.Tests
+namespace MyApplication.Desktop.Tests.ViewModels
 {
     [TestClass]
     public class LoginWindowViewModelTests

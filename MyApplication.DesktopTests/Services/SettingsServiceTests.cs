@@ -1,14 +1,10 @@
-﻿using MyApplication.Desktop.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using FluentAssertions;
-
-using MyApplication.Desktop.Tests;
+﻿using FluentAssertions;
 using MyApplication.Desktop.Properties;
-
+using MyApplication.Desktop.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ploeh.AutoFixture;
 
-namespace MyApplication.Desktop.Services.Tests
+namespace MyApplication.Desktop.Tests.Services
 {
     [TestClass]
     public class SettingsServiceTests
